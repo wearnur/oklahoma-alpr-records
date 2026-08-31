@@ -21,8 +21,28 @@ function renderCameras(q) {
     if (needle && !blob.includes(needle)) return;
     const [lon, lat] = f.geometry.coordinates;
     const color = vendorClass(p.vendor) ? "#e0a84a" : "#6aa7d8";
-    L.circleMarker([lat, lon], { radius: 4, color, weight: 1, fillOpacity: 0.8 }).addTo(layer)
-      .bindPopup(`<b>${p.vendor || "ALPR"}</b><br>${p.operator || p.name || ""}<br>${p.city || ""}`);
+    const pkt = p.packet || null;
+    const money = pkt && pkt.amount_usd != null
+      ? `$${Number(pkt.amount_usd).toLocaleString()}/yr`
+      : null;
+    const ret = pkt && pkt.retention ? String(pkt.retention).split(";")[0] : null;
+    const packetLine = pkt
+      ? `<div class="pkt">${pkt.city}${money ? " · " + money : ""}${ret ? "<br>" + ret : ""}${pkt.has_contract_pdf ? "<br>contract PDF on file" : "<br>no contract PDF yet"}</div>`
+      : `<div class="pkt muted">No city tagged — OSM has no operator. Street view still works.</div>`;
+    const sv = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lon}`;
+    const ms = `https://www.mapillary.com/app/?lat=${lat}&lng=${lon}&z=17`;
+    const bits = [
+      `<b>${p.vendor || "ALPR"}</b>`,
+      p.operator || p.name || "",
+      p.direction ? `facing ${p.direction}` : "",
+      p.mount ? `mount: ${p.mount}` : "",
+      packetLine,
+      `<a href="${sv}" target="_blank" rel="noopener">Street View</a> · <a href="${ms}" target="_blank" rel="noopener">Mapillary</a>`,
+      p.source ? `<a href="${p.source}" target="_blank" rel="noopener">OSM</a>` : "",
+    ].filter(Boolean);
+    L.circleMarker([lat, lon], { radius: 4, color, weight: 1, fillOpacity: 0.8 })
+      .addTo(layer)
+      .bindPopup(bits.join("<br>"), { maxWidth: 280 });
   });
 }
 

@@ -19,6 +19,8 @@ input { width: 100%; box-sizing: border-box; margin: 0.3rem 0 0.8rem; padding: 0
 .term { background: #1a1a16; padding: 0.6rem 0.7rem; margin: 0 0 0.6rem; font-size: 0.85rem; }
 .term b { display: block; margin-bottom: 0.2rem; }
 .flock { color: #f0c36a; }
+.leaflet-popup-content .pkt { margin: 0.4rem 0; font-size: 0.85rem; }
+.leaflet-popup-content .muted { color: #9a958a; }
 @media (max-width: 900px) {
   .layout { grid-template-columns: 1fr; }
 }

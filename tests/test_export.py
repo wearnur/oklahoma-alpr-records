@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from collectors.whoapproved import to_records as wat_records
-from export import export
+from export import export, infer_city
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -29,6 +29,19 @@ def test_export_has_points_and_no_plate_payload():
     assert 33 < lat < 38
     dumped = json.dumps(geo)
     assert "license plate" not in dumped.lower()
+    tulsa = [f for f in geo["features"] if (f["properties"].get("operator") or "").find("Tulsa") >= 0]
+    assert tulsa, "expected OSM cameras operated by Tulsa PD"
+    assert tulsa[0]["properties"]["city"] == "Tulsa"
+    assert tulsa[0]["properties"]["packet"]["city"] == "Tulsa"
+    assert any(f["properties"].get("direction") for f in geo["features"])
+
+
+def test_infer_city_from_operator():
+    names = ["Tulsa", "Oklahoma City", "Edmond", "Broken Arrow"]
+    assert infer_city("Tulsa Police Department", None, names) == "Tulsa"
+    assert infer_city("Edmond Police Department", None, names) == "Edmond"
+    assert infer_city(None, None, names) is None
+    assert infer_city("The Home Depot", None, names) is None
 
 
 def test_whoapproved_filter_still_ok_only():

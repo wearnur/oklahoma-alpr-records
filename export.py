@@ -9,6 +9,21 @@ HERE = Path(__file__).resolve().parent
 INDEX = HERE / "index"
 WEB = HERE / "web" / "data"
 TERMS = INDEX / "terms"
+SEED = HERE / "seed" / "ok-agencies.json"
+
+
+def infer_city(operator: str | None, tagged_city: str | None, names: list[str]) -> str | None:
+    """OSM almost never has addr:city on these poles. Operator is the join key."""
+    if tagged_city:
+        return tagged_city
+    blob = (operator or "").lower()
+    if not blob:
+        return None
+    # Longest name first so "Oklahoma City" beats "Yukon" etc.
+    for name in sorted(names, key=len, reverse=True):
+        if name.lower() in blob:
+            return name
+    return None
 
 
 def _load_records() -> list[dict]:
@@ -21,12 +36,52 @@ def _load_records() -> list[dict]:
 def export() -> dict:
     WEB.mkdir(parents=True, exist_ok=True)
     rows = _load_records()
+    seed = json.loads(SEED.read_text(encoding="utf-8")) if SEED.is_file() else {}
+    city_names = list(seed.get("flocked") or []) + list(seed.get("alpr_vendor_unconfirmed") or [])
+    terms_by_city = {}
+    if TERMS.is_dir():
+        for p in TERMS.glob("*.json"):
+            t = json.loads(p.read_text(encoding="utf-8"))
+            if t.get("city"):
+                terms_by_city[t["city"].lower()] = t
+    agency_by_city: dict[str, dict] = {}
     cameras = []
     agencies = []
     documents = []
     for r in rows:
         kind = r.get("type")
+        if kind == "agency_record":
+            city = (r.get("jurisdiction") or {}).get("city") or r.get("name")
+            if city:
+                agency_by_city.setdefault(city.lower(), r)
+    for r in rows:
+        kind = r.get("type")
         if kind == "camera" and r.get("geom"):
+            tags = (r.get("extra") or {}).get("osm_tags") or {}
+            operator = tags.get("operator")
+            city = infer_city(operator, (r.get("jurisdiction") or {}).get("city"), city_names)
+            packet = None
+            if city:
+                t = terms_by_city.get(city.lower())
+                ag = agency_by_city.get(city.lower())
+                extra = (ag or {}).get("extra") or {}
+                packet = {
+                    "city": city,
+                    "amount_usd": None,
+                    "retention": None,
+                    "status": extra.get("status"),
+                    "has_contract_pdf": bool(t),
+                }
+                if t:
+                    money = t.get("money") or {}
+                    packet["amount_usd"] = money.get("annual_usd") or money.get("contract_total_usd")
+                    ret = t.get("retention") or {}
+                    packet["retention"] = ret.get("order_form") or ret.get("msa_default")
+                elif extra.get("contract_amount_usd"):
+                    try:
+                        packet["amount_usd"] = float(extra["contract_amount_usd"])
+                    except (TypeError, ValueError):
+                        packet["amount_usd"] = extra.get("contract_amount_usd")
             cameras.append(
                 {
                     "type": "Feature",
@@ -38,9 +93,13 @@ def export() -> dict:
                     "properties": {
                         "name": r.get("name"),
                         "vendor": r.get("vendor"),
-                        "city": (r.get("jurisdiction") or {}).get("city"),
-                        "operator": (r.get("extra") or {}).get("osm_tags", {}).get("operator"),
+                        "city": city,
+                        "operator": operator,
+                        "direction": tags.get("direction") or tags.get("camera:direction"),
+                        "mount": tags.get("camera:mount"),
+                        "zone": tags.get("surveillance:zone"),
                         "source": r.get("source", {}).get("url"),
+                        "packet": packet,
                     },
                 }
             )
