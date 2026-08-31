@@ -3,26 +3,38 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Oklahoma ALPR public-record index</title>
+  <title>Oklahoma ALPR records</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
-    <h1>Oklahoma ALPR records</h1>
-    <p class="lede">Public cameras, contracts, and terms. Not a plate tracker. Not a person tracker.</p>
+    <div>
+      <h1>Oklahoma ALPR records</h1>
+      <p class="lede">Public cameras, contracts, terms. Not a plate tracker.</p>
+    </div>
     <p id="stats">Loading…</p>
+    <p class="legend">
+      <span class="swatch pdf"></span> contract PDF
+      <span class="swatch hole"></span> city, no PDF
+      <span class="swatch none"></span> city unknown
+    </p>
   </header>
   <div class="layout">
     <div id="map"></div>
-    <aside>
-      <label>Filter <input id="q" type="search" placeholder="city, vendor, agency" /></label>
-      <h2>Terms on file</h2>
-      <div id="terms"></div>
-      <h2>Agencies</h2>
-      <ul id="agencies"></ul>
-      <h2>Documents</h2>
-      <ul id="docs"></ul>
+    <aside id="rail">
+      <label>Filter <input id="q" type="search" placeholder="city, vendor, operator" /></label>
+      <nav class="tabs">
+        <button type="button" data-tab="missing" class="on">Missing</button>
+        <button type="button" data-tab="dossier">Dossier</button>
+        <button type="button" data-tab="calendar">Calendar</button>
+      </nav>
+      <section id="tab-missing"></section>
+      <section id="tab-dossier" hidden>
+        <p class="muted" id="dossier-empty">Click a camera.</p>
+        <div id="dossier" hidden></div>
+      </section>
+      <section id="tab-calendar" hidden></section>
     </aside>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

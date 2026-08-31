@@ -1,6 +1,8 @@
 {
   "cameras": 1457,
+  "cameras_with_city": 1225,
   "agencies": 62,
   "documents": 10,
-  "terms": 2
+  "terms": 2,
+  "missing_packets": 42
 }

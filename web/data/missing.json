@@ -1,0 +1,380 @@
+[
+  {
+    "city": "Tulsa",
+    "cameras": 310,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Midwest City",
+    "cameras": 65,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Edmond",
+    "cameras": 41,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Ardmore",
+    "cameras": 37,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "alpr"
+  },
+  {
+    "city": "Lawton",
+    "cameras": 33,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Moore",
+    "cameras": 31,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Jenks",
+    "cameras": 23,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Norman",
+    "cameras": 17,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Miami",
+    "cameras": 15,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "alpr"
+  },
+  {
+    "city": "Duncan",
+    "cameras": 14,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "alpr"
+  },
+  {
+    "city": "Sapulpa",
+    "cameras": 12,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "alpr"
+  },
+  {
+    "city": "Bartlesville",
+    "cameras": 12,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Mustang",
+    "cameras": 12,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Muskogee",
+    "cameras": 11,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Yukon",
+    "cameras": 10,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Purcell",
+    "cameras": 10,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Catoosa",
+    "cameras": 10,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Del City",
+    "cameras": 9,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Durant",
+    "cameras": 9,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "alpr"
+  },
+  {
+    "city": "Pryor Creek",
+    "cameras": 8,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Glenpool",
+    "cameras": 7,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Enid",
+    "cameras": 6,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "alpr"
+  },
+  {
+    "city": "Bristow",
+    "cameras": 6,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Wagoner",
+    "cameras": 6,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Piedmont",
+    "cameras": 5,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Harrah",
+    "cameras": 4,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "McAlester",
+    "cameras": 4,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "alpr"
+  },
+  {
+    "city": "Coweta",
+    "cameras": 4,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Ada",
+    "cameras": 4,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Stillwater",
+    "cameras": 3,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Sand Springs",
+    "cameras": 3,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Locust Grove",
+    "cameras": 3,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Hugo",
+    "cameras": 3,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Newcastle",
+    "cameras": 3,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Warr Acres",
+    "cameras": 2,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Guthrie",
+    "cameras": 2,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Watonga",
+    "cameras": 2,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Union City",
+    "cameras": 2,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Idabel",
+    "cameras": 2,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "alpr"
+  },
+  {
+    "city": "Calera",
+    "cameras": 1,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "flocked"
+  },
+  {
+    "city": "Pauls Valley",
+    "cameras": 1,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "alpr"
+  },
+  {
+    "city": "Guymon",
+    "cameras": 1,
+    "has_contract_pdf": false,
+    "amount_usd": null,
+    "retention_days": null,
+    "renewal_end": null,
+    "status": "alpr"
+  }
+]

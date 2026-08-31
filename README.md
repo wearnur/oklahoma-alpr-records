@@ -16,6 +16,18 @@ python serve.py
 
 Open http://127.0.0.1:8765/
 
+Click a pin for the **dossier** (terms, PDF, Street View, copy-ready Open Records text). Missing packets are the default tab.
+
+```text
+GET /v1/cameras?city=Tulsa
+GET /v1/terms?city=Oklahoma%20City
+GET /v1/missing
+GET /v1/requests
+GET /docs/Master-Agreement-06-20-23.pdf
+```
+
+Open Records replies: set `RECORDS_INBOX` and `RECORDS_IMAP_*`, then `python run.py mailbox`. We draft requests; we do not auto-file 55 portals.
+
 Static files live in `web/` (`data/cameras.geojson`, `agencies.json`, `documents.json`, `terms.json`). Point any HTTP client at those.
 
 ## What is on file

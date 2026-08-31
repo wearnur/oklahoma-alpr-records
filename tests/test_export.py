@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from collectors.requests import guess_city_from_text, request_text
 from collectors.whoapproved import to_records as wat_records
 from export import export, infer_city
 
@@ -42,6 +43,23 @@ def test_infer_city_from_operator():
     assert infer_city("Edmond Police Department", None, names) == "Edmond"
     assert infer_city(None, None, names) is None
     assert infer_city("The Home Depot", None, names) is None
+
+
+def test_request_draft_names_inbox_and_city():
+    row = request_text("Tulsa")
+    assert "Tulsa" in row["subject"]
+    assert "24A.1" in row["body"]
+    assert row["portal"].startswith("https://")
+    assert guess_city_from_text("RE: Flock contract Tulsa PD", ["Tulsa", "Edmond"]) == "Tulsa"
+
+
+def test_export_writes_missing_json():
+    export()
+    missing = json.loads((ROOT / "web" / "data" / "missing.json").read_text(encoding="utf-8"))
+    assert isinstance(missing, list)
+    assert all("city" in m and "cameras" in m for m in missing)
+    status = json.loads((ROOT / "web" / "data" / "status.json").read_text(encoding="utf-8"))
+    assert "missing_packets" in status
 
 
 def test_whoapproved_filter_still_ok_only():

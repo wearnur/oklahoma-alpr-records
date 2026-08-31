@@ -1,23 +1,139 @@
 #!/usr/bin/env python3
-"""Local viewer. python serve.py  then open http://127.0.0.1:8765/"""
+"""Viewer + JSON API. python serve.py  → http://127.0.0.1:8765/
+
+  GET /                      map
+  GET /v1/cameras?city=
+  GET /v1/terms?city=
+  GET /v1/missing
+  GET /v1/requests
+  GET /v1/documents?city=
+  GET /v1/status
+  GET /docs/<file>.pdf
+"""
 
 from __future__ import annotations
 
 import argparse
-from functools import partial
+import json
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import parse_qs, urlparse
 
-WEB = Path(__file__).resolve().parent / "web"
+HERE = Path(__file__).resolve().parent
+WEB = HERE / "web"
+DOCS = HERE / "data" / "docs"
+
+
+def _load(name: str):
+    path = WEB / "data" / name
+    if not path.is_file():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _city_q(qs: dict) -> str:
+    return (qs.get("city") or [""])[0].strip().lower()
+
+
+def api(path: str, qs: dict):
+    if path in {"/v1/status", "/v1/status/"}:
+        return _load("status.json") or {}
+    if path in {"/v1/missing", "/v1/missing/"}:
+        return _load("missing.json") or []
+    if path in {"/v1/requests", "/v1/requests/"}:
+        return _load("requests.json") or []
+    if path.startswith("/v1/cameras"):
+        geo = _load("cameras.geojson") or {"type": "FeatureCollection", "features": []}
+        city = _city_q(qs)
+        if not city:
+            return geo
+        feats = [
+            f
+            for f in geo.get("features") or []
+            if city in str((f.get("properties") or {}).get("city") or "").lower()
+        ]
+        return {"type": "FeatureCollection", "features": feats}
+    if path.startswith("/v1/terms"):
+        terms = _load("terms.json") or []
+        city = _city_q(qs)
+        if not city:
+            return terms
+        return [t for t in terms if city in str(t.get("city") or "").lower()]
+    if path.startswith("/v1/documents"):
+        docs = _load("documents.json") or []
+        city = _city_q(qs)
+        if not city:
+            return docs
+        return [d for d in docs if city in str(d.get("city") or "").lower()]
+    if path.startswith("/v1/agencies"):
+        ag = _load("agencies.json") or []
+        city = _city_q(qs)
+        if not city:
+            return ag
+        return [
+            a
+            for a in ag
+            if city in str(a.get("city") or a.get("name") or "").lower()
+        ]
+    return None
+
+
+class Handler(SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory=str(WEB), **kwargs)
+
+    def log_message(self, fmt: str, *args) -> None:
+        pass
+
+    def _json(self, payload, code: int = 200) -> None:
+        raw = json.dumps(payload).encode("utf-8")
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Content-Length", str(len(raw)))
+        self.end_headers()
+        self.wfile.write(raw)
+
+    def do_GET(self) -> None:  # noqa: N802
+        parsed = urlparse(self.path)
+        path = parsed.path
+        qs = parse_qs(parsed.query)
+        if path.startswith("/v1/"):
+            payload = api(path, qs)
+            if payload is None:
+                self._json({"error": "not found", "path": path}, 404)
+                return
+            self._json(payload)
+            return
+        if path.startswith("/docs/"):
+            name = Path(path).name
+            if name != Path(path[6:]).name or ".." in path:
+                self.send_error(400)
+                return
+            fp = DOCS / name
+            if not fp.is_file():
+                incoming = list(DOCS.joinpath("incoming").rglob(name)) if DOCS.joinpath("incoming").exists() else []
+                fp = incoming[0] if incoming else fp
+            if not fp.is_file():
+                self.send_error(404)
+                return
+            data = fp.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/pdf")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+            return
+        super().do_GET()
 
 
 def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--port", type=int, default=8765)
     args = p.parse_args()
-    handler = partial(SimpleHTTPRequestHandler, directory=str(WEB))
-    httpd = ThreadingHTTPServer(("127.0.0.1", args.port), handler)
+    httpd = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
     print(f"http://127.0.0.1:{args.port}/")
+    print(f"api  http://127.0.0.1:{args.port}/v1/missing")
     httpd.serve_forever()
 
 

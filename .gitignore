@@ -5,6 +5,7 @@ data/ocr-preview/
 data/*.html
 data/_dump.py
 data/osm-ok-alpr.json
+data/ok-places.json
 data/usaspending-flock.json
 data/whoapproved.csv
 data/whoapproved.json

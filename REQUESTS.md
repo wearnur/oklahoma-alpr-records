@@ -46,6 +46,17 @@ You probably will not. If a portal is dead:
 
 OKC Clerk is downtown; Police HQ 700 Colcord is the MSA notice address, not the walk-in target unless the clerk sends you there.
 
+## Automated receive (not automated send)
+
+We do **not** auto-file 55 portal submissions. That is send-gated. What is automated:
+
+1. `python run.py export` drafts a queue in `index/requests/queue.json` (and `web/data/requests.json`) for every city with cameras and no contract PDF.
+2. The dossier **Copy request** + **Open portal** is the human submit.
+3. Ask the city to email PDFs to `RECORDS_INBOX` (env).
+4. `python run.py mailbox` polls IMAP (`RECORDS_IMAP_HOST/USER/PASS`), saves PDFs under `data/docs/incoming/<city>/`, marks that city `received`.
+
+Stand up a mailbox you control before this is live. Do not put a personal inbox in the public repo.
+
 ## After they produce
 
 Drop the PDF in this repo’s `data/docs/` and run `python run.py ingest`. Do not send us plate reads if they accidentally include any — that does not go in the index.

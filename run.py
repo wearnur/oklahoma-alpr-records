@@ -127,7 +127,18 @@ def main() -> int:
 
         print(json.dumps(export_web(), indent=2))
         return 0
-    print("usage: run.py ingest|status|export [--force]", file=sys.stderr)
+    if cmd == "places":
+        from collectors.ok_places import fetch as fetch_places
+
+        payload = fetch_places(DATA / "ok-places.json", force=force)
+        print(json.dumps({"relations": len(payload.get("elements") or [])}, indent=2))
+        return 0
+    if cmd == "mailbox":
+        from collectors.mailbox import poll
+
+        print(json.dumps(poll(), indent=2))
+        return 0
+    print("usage: run.py ingest|status|export|places|mailbox [--force]", file=sys.stderr)
     return 2
 
 
