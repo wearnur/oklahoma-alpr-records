@@ -1,0 +1,45 @@
+{
+  "id": "terms:broken-arrow:23-1170",
+  "city": "Broken Arrow",
+  "vendor": "Flock Group, Inc.",
+  "file_number": "23-1170",
+  "extracted": "2026-08-31",
+  "confidence": "high for Legistar legislation text (selectable PDF) and Exhibit A Order Form (page image).",
+  "term": {
+    "council": "2023-09-19",
+    "pilot_days": 60,
+    "pilot_terminate": "without penalty or fees at end of 60-day pilot",
+    "initial_term": "12 months",
+    "renewal_term": "24 months listed on order form",
+    "status_as_of_tracker": "Expired (whoapprovedthis.org, last_verified 2026-08-20)"
+  },
+  "money": {
+    "contract_total_usd": 18250,
+    "implementation_usd": 3250,
+    "annual_recurring_usd": 15000,
+    "cameras": 5,
+    "product": "Flock Safety Falcon",
+    "billing": "Annual plan, invoiced at end of pilot; Net 30"
+  },
+  "retention": {
+    "order_form": "30 days"
+  },
+  "sharing_and_license": {
+    "flockos_essentials": [
+      "Community Cameras (full access to privately owned devices in jurisdiction shared with you)",
+      "State Network (LP lookup only)",
+      "Nationwide Network (LP lookup only)",
+      "Direct Share – surrounding jurisdiction",
+      "License Plate Lookup",
+      "Vehicle Fingerprint search",
+      "Real-time NCIC alerts on Flock ALPR cameras",
+      "Unlimited custom hot lists"
+    ],
+    "sales_sheet": "National and Local Sharing: opt into Flock Safety sharing networks including one-to-one, national, and statewide; also lists external LPR databases (NCIC, FBI, AMBER, CCIC, etc.). That page is marketing, not the signed MSA body."
+  },
+  "sources": [
+    "data/docs/Legislation-Text.pdf",
+    "data/docs/FY24-Flock-Safety-agreement.pdf",
+    "https://brokenarrow.legistar.com/LegislationDetail.aspx?GUID=0FEC941D-F708-4143-A707-80E43B426851&ID=6354512"
+  ]
+}

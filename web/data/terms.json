@@ -1,0 +1,103 @@
+[
+  {
+    "id": "terms:broken-arrow:23-1170",
+    "city": "Broken Arrow",
+    "vendor": "Flock Group, Inc.",
+    "file_number": "23-1170",
+    "extracted": "2026-08-31",
+    "confidence": "high for Legistar legislation text (selectable PDF) and Exhibit A Order Form (page image).",
+    "term": {
+      "council": "2023-09-19",
+      "pilot_days": 60,
+      "pilot_terminate": "without penalty or fees at end of 60-day pilot",
+      "initial_term": "12 months",
+      "renewal_term": "24 months listed on order form",
+      "status_as_of_tracker": "Expired (whoapprovedthis.org, last_verified 2026-08-20)"
+    },
+    "money": {
+      "contract_total_usd": 18250,
+      "implementation_usd": 3250,
+      "annual_recurring_usd": 15000,
+      "cameras": 5,
+      "product": "Flock Safety Falcon",
+      "billing": "Annual plan, invoiced at end of pilot; Net 30"
+    },
+    "retention": {
+      "order_form": "30 days"
+    },
+    "sharing_and_license": {
+      "flockos_essentials": [
+        "Community Cameras (full access to privately owned devices in jurisdiction shared with you)",
+        "State Network (LP lookup only)",
+        "Nationwide Network (LP lookup only)",
+        "Direct Share \u2013 surrounding jurisdiction",
+        "License Plate Lookup",
+        "Vehicle Fingerprint search",
+        "Real-time NCIC alerts on Flock ALPR cameras",
+        "Unlimited custom hot lists"
+      ],
+      "sales_sheet": "National and Local Sharing: opt into Flock Safety sharing networks including one-to-one, national, and statewide; also lists external LPR databases (NCIC, FBI, AMBER, CCIC, etc.). That page is marketing, not the signed MSA body."
+    },
+    "sources": [
+      "data/docs/Legislation-Text.pdf",
+      "data/docs/FY24-Flock-Safety-agreement.pdf",
+      "https://brokenarrow.legistar.com/LegislationDetail.aspx?GUID=0FEC941D-F708-4143-A707-80E43B426851&ID=6354512"
+    ]
+  },
+  {
+    "id": "terms:okc:c241032",
+    "city": "Oklahoma City",
+    "vendor": "Flock Group, Inc.",
+    "contract_id": "C241032",
+    "extracted": "2026-08-31",
+    "confidence": "high for memos (selectable text); high for MSA pages 1-6, 9, 13, 16 (read from page images). Full 79-page MSA is an image PDF; remaining pages not fully read.",
+    "term": {
+      "msa_dated": "2023-05-16",
+      "effective": "date of mutual execution",
+      "initial": {
+        "start": "2023-07-01",
+        "end": "2024-06-30"
+      },
+      "renewals": "four additional one-year terms (up to five years total); 30 days notice of non-renewal",
+      "renewal_1": {
+        "start": "2024-07-01",
+        "end": "2025-06-30",
+        "amount_usd": 270000,
+        "source": "City Council Memo Renewal 1, 2024-07-16"
+      },
+      "renewal_2": {
+        "start": "2025-07-01",
+        "end": "2026-06-30",
+        "amount_usd": 270000,
+        "source": "City Council Memo Renewal 2, 2025-07-01"
+      },
+      "renewal_2_note": "Memo 2 states this is the second of four one-year renewals. Memo 1 dated the original council approval 2021-07-20; Memo 2 dates it 2023-07-20. File on disk is the 2023-05-16 MSA / 2023-06-20 scan."
+    },
+    "money": {
+      "annual_usd": 270000,
+      "fund": "Police Sales Tax Fund \u2013 Special Operations Support \u2013 PSST Supplies/Equipment - Professional Services (1201-4201003-11056-52040046)",
+      "hardware_ownership": "Flock Hardware remains exclusive property of Flock (MSA 10.1)"
+    },
+    "retention": {
+      "msa_default": "rolling thirty (30) days; Flock deletes Footage on that basis except as stated on the Order Form (MSA recitals + 1.13 / 2.1)",
+      "okcpd_ops_manual_5_118": "sixty (60) days for ALPR, unless downloaded as evidence (Police Ops Manual p.275). OCPD memo 2026-03-10 says there is no published Flock-specific policy/SOP; 5-118 may describe other ALPR, not Flock poles.",
+      "later_news": "News9 2026-08-18: council renewed with retention reduced from 30 days to 7 days. That later vote is not in the 2023 PDF."
+    },
+    "sharing_and_license": {
+      "hotlist": "includes NCIC and other national data, AMBER / missing persons, local crime plates (MSA 1.11)",
+      "services_include": "searching image records, video and sharing Footage (MSA 1.9)",
+      "customer_data_title": "Customer retains title to Customer Data. Customer grants Flock a limited, non-exclusive, royalty-free, irrevocable, worldwide license to use Customer Data to provide the Services. Flock does not own and shall not sell or publish Customer Data (MSA 4.1).",
+      "ops_manual": "5-118 says ALPR data will not be shared as part of a law enforcement information database; other agencies may request data for specific investigations. Conflict with Flock network features is unresolved in the packet we have.",
+      "ocpd_gap": "OCPD-2885-2026 (2026-03-10): no published access-control reports, no Flock-specific discipline standards, no audit procedures, no transparency reporting."
+    },
+    "sources": [
+      "data/docs/Master-Agreement-06-20-23.pdf",
+      "data/docs/City-Council-Memo-Renewal-1.pdf",
+      "data/docs/City-Council-Memo-Renewal-2.pdf",
+      "data/docs/Renewal-Letter-Year-1.pdf",
+      "data/docs/Renewal-Letter-Year-2.pdf",
+      "data/docs/Department-Memorandum-OCPD-2885-2026.pdf",
+      "data/docs/Police-SOPs-ALPR-FacialRecognition-Drones.pdf"
+    ]
+  }
+]

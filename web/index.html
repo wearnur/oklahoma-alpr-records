@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Oklahoma ALPR public-record index</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Oklahoma ALPR records</h1>
+    <p class="lede">Public cameras, contracts, and terms. Not a plate tracker. Not a person tracker.</p>
+    <p id="stats">Loading…</p>
+  </header>
+  <div class="layout">
+    <div id="map"></div>
+    <aside>
+      <label>Filter <input id="q" type="search" placeholder="city, vendor, agency" /></label>
+      <h2>Terms on file</h2>
+      <div id="terms"></div>
+      <h2>Agencies</h2>
+      <ul id="agencies"></ul>
+      <h2>Documents</h2>
+      <ul id="docs"></ul>
+    </aside>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

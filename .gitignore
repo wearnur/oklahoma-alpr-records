@@ -1,0 +1,12 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+data/ocr-preview/
+data/*.html
+data/_dump.py
+data/osm-ok-alpr.json
+data/usaspending-flock.json
+data/whoapproved.csv
+data/whoapproved.json
+data/areyouflocked-ok.html
+data/broken-arrow-legistar.html

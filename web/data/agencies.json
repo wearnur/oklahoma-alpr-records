@@ -1,0 +1,951 @@
+[
+  {
+    "id": "agency:areyouflocked:ada",
+    "name": "Ada",
+    "vendor": "Flock Safety",
+    "city": "Ada",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:bartlesville",
+    "name": "Bartlesville",
+    "vendor": "Flock Safety",
+    "city": "Bartlesville",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:bristow",
+    "name": "Bristow",
+    "vendor": "Flock Safety",
+    "city": "Bristow",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:broken-arrow",
+    "name": "Broken Arrow",
+    "vendor": "Flock Safety",
+    "city": "Broken Arrow",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:calera",
+    "name": "Calera",
+    "vendor": "Flock Safety",
+    "city": "Calera",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:catoosa",
+    "name": "Catoosa",
+    "vendor": "Flock Safety",
+    "city": "Catoosa",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:coweta",
+    "name": "Coweta",
+    "vendor": "Flock Safety",
+    "city": "Coweta",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:del-city",
+    "name": "Del City",
+    "vendor": "Flock Safety",
+    "city": "Del City",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:edmond",
+    "name": "Edmond",
+    "vendor": "Flock Safety",
+    "city": "Edmond",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:glenpool",
+    "name": "Glenpool",
+    "vendor": "Flock Safety",
+    "city": "Glenpool",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:guthrie",
+    "name": "Guthrie",
+    "vendor": "Flock Safety",
+    "city": "Guthrie",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:harrah",
+    "name": "Harrah",
+    "vendor": "Flock Safety",
+    "city": "Harrah",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:hugo",
+    "name": "Hugo",
+    "vendor": "Flock Safety",
+    "city": "Hugo",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:jenks",
+    "name": "Jenks",
+    "vendor": "Flock Safety",
+    "city": "Jenks",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:lawton",
+    "name": "Lawton",
+    "vendor": "Flock Safety",
+    "city": "Lawton",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:locust-grove",
+    "name": "Locust Grove",
+    "vendor": "Flock Safety",
+    "city": "Locust Grove",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:midwest-city",
+    "name": "Midwest City",
+    "vendor": "Flock Safety",
+    "city": "Midwest City",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:moore",
+    "name": "Moore",
+    "vendor": "Flock Safety",
+    "city": "Moore",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:muskogee",
+    "name": "Muskogee",
+    "vendor": "Flock Safety",
+    "city": "Muskogee",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:mustang",
+    "name": "Mustang",
+    "vendor": "Flock Safety",
+    "city": "Mustang",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:newcastle",
+    "name": "Newcastle",
+    "vendor": "Flock Safety",
+    "city": "Newcastle",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:norman",
+    "name": "Norman",
+    "vendor": "Flock Safety",
+    "city": "Norman",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:oklahoma-city",
+    "name": "Oklahoma City",
+    "vendor": "Flock Safety",
+    "city": "Oklahoma City",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:pawhuska",
+    "name": "Pawhuska",
+    "vendor": "Flock Safety",
+    "city": "Pawhuska",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:piedmont",
+    "name": "Piedmont",
+    "vendor": "Flock Safety",
+    "city": "Piedmont",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:pryor-creek",
+    "name": "Pryor Creek",
+    "vendor": "Flock Safety",
+    "city": "Pryor Creek",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:purcell",
+    "name": "Purcell",
+    "vendor": "Flock Safety",
+    "city": "Purcell",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:red-rock",
+    "name": "Red Rock",
+    "vendor": "Flock Safety",
+    "city": "Red Rock",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:sand-springs",
+    "name": "Sand Springs",
+    "vendor": "Flock Safety",
+    "city": "Sand Springs",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:stillwater",
+    "name": "Stillwater",
+    "vendor": "Flock Safety",
+    "city": "Stillwater",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:tulsa",
+    "name": "Tulsa",
+    "vendor": "Flock Safety",
+    "city": "Tulsa",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:union-city",
+    "name": "Union City",
+    "vendor": "Flock Safety",
+    "city": "Union City",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:wagoner",
+    "name": "Wagoner",
+    "vendor": "Flock Safety",
+    "city": "Wagoner",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:warr-acres",
+    "name": "Warr Acres",
+    "vendor": "Flock Safety",
+    "city": "Warr Acres",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:watonga",
+    "name": "Watonga",
+    "vendor": "Flock Safety",
+    "city": "Watonga",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:yukon",
+    "name": "Yukon",
+    "vendor": "Flock Safety",
+    "city": "Yukon",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "flocked",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:altus",
+    "name": "Altus",
+    "vendor": null,
+    "city": "Altus",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:arapaho",
+    "name": "Arapaho",
+    "vendor": null,
+    "city": "Arapaho",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:ardmore",
+    "name": "Ardmore",
+    "vendor": null,
+    "city": "Ardmore",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:chandler",
+    "name": "Chandler",
+    "vendor": null,
+    "city": "Chandler",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:claremore",
+    "name": "Claremore",
+    "vendor": null,
+    "city": "Claremore",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:duncan",
+    "name": "Duncan",
+    "vendor": null,
+    "city": "Duncan",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:durant",
+    "name": "Durant",
+    "vendor": null,
+    "city": "Durant",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:enid",
+    "name": "Enid",
+    "vendor": null,
+    "city": "Enid",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:guymon",
+    "name": "Guymon",
+    "vendor": null,
+    "city": "Guymon",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:idabel",
+    "name": "Idabel",
+    "vendor": null,
+    "city": "Idabel",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:mcalester",
+    "name": "McAlester",
+    "vendor": null,
+    "city": "McAlester",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:miami",
+    "name": "Miami",
+    "vendor": null,
+    "city": "Miami",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:newkirk",
+    "name": "Newkirk",
+    "vendor": null,
+    "city": "Newkirk",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:nowata",
+    "name": "Nowata",
+    "vendor": null,
+    "city": "Nowata",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:okmulgee",
+    "name": "Okmulgee",
+    "vendor": null,
+    "city": "Okmulgee",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:pauls-valley",
+    "name": "Pauls Valley",
+    "vendor": null,
+    "city": "Pauls Valley",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:poteau",
+    "name": "Poteau",
+    "vendor": null,
+    "city": "Poteau",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:sapulpa",
+    "name": "Sapulpa",
+    "vendor": null,
+    "city": "Sapulpa",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:areyouflocked:woodward",
+    "name": "Woodward",
+    "vendor": null,
+    "city": "Woodward",
+    "source": {
+      "name": "areyouflocked-seed",
+      "url": "https://areyouflocked.com/oklahoma",
+      "retrieved": "2026-08-31T22:20:37.857144+00:00"
+    },
+    "extra": {
+      "status": "alpr",
+      "note": "agency centroid, not a camera pole"
+    }
+  },
+  {
+    "id": "agency:whoapproved:broken-arrow",
+    "name": "Broken Arrow",
+    "vendor": "Flock Safety",
+    "city": "Broken Arrow",
+    "source": {
+      "name": "whoapprovedthis",
+      "url": "https://whoapprovedthis.org/city/ok-broken-arrow/",
+      "retrieved": "2026-08-31T22:20:37.874188+00:00"
+    },
+    "extra": {
+      "status": "Expired",
+      "approval_date": "2023-09-19",
+      "contract_amount_usd": "18250",
+      "camera_count": "5",
+      "page_url": "https://whoapprovedthis.org/city/ok-broken-arrow/",
+      "primary_source": "https://brokenarrow.legistar.com/LegislationDetail.aspx?GUID=0FEC941D-F708-4143-A707-80E43B426851&ID=6354512&Options=&Search=&FullText=1"
+    }
+  },
+  {
+    "id": "agency:whoapproved:ardmore",
+    "name": "Ardmore",
+    "vendor": "Flock Safety",
+    "city": "Ardmore",
+    "source": {
+      "name": "whoapprovedthis",
+      "url": "https://whoapprovedthis.org/city/ok-ardmore/",
+      "retrieved": "2026-08-31T22:20:37.874188+00:00"
+    },
+    "extra": {
+      "status": "Active",
+      "approval_date": "2026-08-17",
+      "contract_amount_usd": "70000",
+      "camera_count": "23",
+      "page_url": "https://whoapprovedthis.org/city/ok-ardmore/",
+      "primary_source": "https://www.ardmoreleader.com/news/divided-over-data-ardmore-police-defend-high-tech-surveillance-system-amid-bias-concerns/article_4764fcac-f2ac-4335-a0e1-bb2a3557c5d6.html"
+    }
+  },
+  {
+    "id": "agency:whoapproved:choctaw",
+    "name": "Choctaw",
+    "vendor": "Flock Safety",
+    "city": "Choctaw",
+    "source": {
+      "name": "whoapprovedthis",
+      "url": "https://whoapprovedthis.org/city/choctaw-ok/",
+      "retrieved": "2026-08-31T22:20:37.874188+00:00"
+    },
+    "extra": {
+      "status": "Active",
+      "approval_date": "2026-07-21",
+      "camera_count": "4",
+      "page_url": "https://whoapprovedthis.org/city/choctaw-ok/",
+      "primary_source": "https://towncloud.io/go/choctaw-ok/agendas/126/minutes/get_agenda_document_link"
+    }
+  },
+  {
+    "id": "agency:whoapproved:edmond",
+    "name": "Edmond",
+    "vendor": "Flock Safety",
+    "city": "Edmond",
+    "source": {
+      "name": "whoapprovedthis",
+      "url": "https://whoapprovedthis.org/city/edmond-ok/",
+      "retrieved": "2026-08-31T22:20:37.874188+00:00"
+    },
+    "extra": {
+      "status": "Active",
+      "camera_count": "21",
+      "page_url": "https://whoapprovedthis.org/city/edmond-ok/",
+      "primary_source": "https://nondoc.com/2024/04/08/edmond-surveillance-license-plate-readers-alleged-eps-camera-access-draw-privacy-concerns/"
+    }
+  },
+  {
+    "id": "agency:whoapproved:bartlesville",
+    "name": "Bartlesville",
+    "vendor": "Flock Safety",
+    "city": "Bartlesville",
+    "source": {
+      "name": "whoapprovedthis",
+      "url": "https://whoapprovedthis.org/city/bartlesville-ok/",
+      "retrieved": "2026-08-31T22:20:37.874188+00:00"
+    },
+    "extra": {
+      "status": "Active",
+      "camera_count": "10",
+      "page_url": "https://whoapprovedthis.org/city/bartlesville-ok/",
+      "primary_source": "https://www.newson6.com/story/67f4e53dd53851393fcca32d/bartlesville-city-council-approves-new-restrictions-on-license-plate-cameras-keeps-30-day-data-storage-rule"
+    }
+  },
+  {
+    "id": "agency:whoapproved:tulsa",
+    "name": "Tulsa",
+    "vendor": "Flock Safety",
+    "city": "Tulsa",
+    "source": {
+      "name": "whoapprovedthis",
+      "url": "https://whoapprovedthis.org/city/tulsa-ok/",
+      "retrieved": "2026-08-31T22:20:37.874188+00:00"
+    },
+    "extra": {
+      "status": "Active",
+      "camera_count": "105",
+      "page_url": "https://whoapprovedthis.org/city/tulsa-ok/",
+      "primary_source": "https://www.readfrontier.org/stories/tulsas-surveillance-gamble/"
+    }
+  },
+  {
+    "id": "agency:whoapproved:oklahoma-city",
+    "name": "Oklahoma City",
+    "vendor": "Flock Safety",
+    "city": "Oklahoma City",
+    "source": {
+      "name": "whoapprovedthis",
+      "url": "https://whoapprovedthis.org/city/ok-oklahoma-city/",
+      "retrieved": "2026-08-31T22:20:37.874188+00:00"
+    },
+    "extra": {
+      "status": "Renewal upcoming",
+      "contract_amount_usd": "270000",
+      "page_url": "https://whoapprovedthis.org/city/ok-oklahoma-city/",
+      "primary_source": "https://www.kgou.org/politics-and-government/2026-07-01/surveillance-or-safety-okc-city-council-to-consider-automated-license-plate-reader-contract-renewal"
+    }
+  }
+]
