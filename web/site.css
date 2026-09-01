@@ -72,7 +72,54 @@ nav a.on, nav a:hover { color: var(--ink); }
   color: var(--mute);
 }
 
-/* Home */
+/* Inquire (home) */
+.inquire-page { min-height: 100vh; }
+.inquire {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 18vh 1.5rem 4rem;
+}
+.inquire label { display: block; margin-bottom: 0.6rem; }
+.inquire #q {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--ink);
+  background: transparent;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 1.55rem;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  padding: 0.35rem 0 0.55rem;
+  color: var(--ink);
+  outline: none;
+  caret-color: var(--mark);
+}
+.ambient {
+  min-height: 1.4rem;
+  margin: 1.1rem 0 0;
+  color: var(--mute);
+  font-family: "IBM Plex Sans Condensed", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: opacity 0.35s ease;
+}
+#out { margin-top: 1.8rem; }
+.line {
+  opacity: 0;
+  animation: rise 0.45s ease forwards;
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.hit { padding: 0.85rem 0; border-bottom: 1px solid var(--line); }
+.hit p { margin: 0.15rem 0; font-weight: 300; }
+.hit .actions { margin-top: 0.45rem; font-size: 12px; }
+.hit .actions a { border: 0; margin-right: 0.6rem; font-family: "IBM Plex Sans Condensed", sans-serif; letter-spacing: 0.12em; text-transform: uppercase; font-size: 10px; color: var(--mute); }
+.hit .actions a:hover { color: var(--mark); }
+
+/* Home (legacy block unused) */
 .home {
   max-width: 38rem;
   padding: 12vh 1.5rem 4rem;

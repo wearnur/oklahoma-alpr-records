@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -188,8 +189,30 @@ def export() -> dict:
         )
         row["cameras"] += 1
         row["has_contract_pdf"] = row["has_contract_pdf"] or bool(pkt.get("has_contract_pdf"))
+    area_km2 = {}
+    for name, shp in shapes:
+        try:
+            area_km2[name] = round(
+                float(shp.area) * 111.32 * (111.32 * math.cos(math.radians(35.47))),
+                2,
+            )
+        except Exception:  # noqa: BLE001
+            continue
+    total_cams = sum(v["cameras"] for v in missing_map.values()) or 1
+    cities = []
+    for v in missing_map.values():
+        km2 = area_km2.get(v["city"])
+        cities.append(
+            {
+                **v,
+                "km2": km2,
+                "per_km2": round(v["cameras"] / km2, 2) if km2 else None,
+                "share_pct": round(100.0 * v["cameras"] / total_cams, 1),
+            }
+        )
+    cities.sort(key=lambda r: -r["cameras"])
     missing = sorted(
-        [v for v in missing_map.values() if not v["has_contract_pdf"]],
+        [v for v in cities if not v["has_contract_pdf"]],
         key=lambda r: -r["cameras"],
     )
     try:
@@ -204,6 +227,7 @@ def export() -> dict:
     (WEB / "documents.json").write_text(json.dumps(documents, indent=2), encoding="utf-8")
     (WEB / "terms.json").write_text(json.dumps(terms, indent=2), encoding="utf-8")
     (WEB / "missing.json").write_text(json.dumps(missing, indent=2), encoding="utf-8")
+    (WEB / "cities.json").write_text(json.dumps(cities, indent=2), encoding="utf-8")
     queue_path = INDEX / "requests" / "queue.json"
     queue = json.loads(queue_path.read_text(encoding="utf-8")) if queue_path.is_file() else []
     (WEB / "requests.json").write_text(json.dumps(queue, indent=2), encoding="utf-8")

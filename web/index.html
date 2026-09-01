@@ -6,7 +6,7 @@
   <title>Oklahoma ALPR index</title>
   <link rel="stylesheet" href="site.css" />
 </head>
-<body>
+<body class="inquire-page">
   <header class="top">
     <a class="brand" href="index.html">Oklahoma ALPR index</a>
     <nav>
@@ -16,36 +16,12 @@
       <a href="records.html">Records</a>
     </nav>
   </header>
-  <div class="meta">
-    <span>Public record</span>
-    <span>Not a plate tracker</span>
-    <span>Oklahoma</span>
-  </div>
-  <main class="home">
-    <p class="kicker">Union catalog</p>
-    <h1>A live index of automated license-plate readers and the contracts behind them.</h1>
-    <p>Cameras are already on OpenStreetMap. The gap is the packet: who paid, how much, how long footage is kept, who else can query it.</p>
-    <p class="not">This site does not store plates, faces, or vehicle paths. It retrieves the public record at the speed a clerk would, if the clerk had already filed the request.</p>
-    <div class="counts" id="counts">
-      <div><b>—</b><span class="kicker">Cameras</span></div>
-      <div><b>—</b><span class="kicker">With city</span></div>
-      <div><b>—</b><span class="kicker">Packets</span></div>
-      <div><b>—</b><span class="kicker">Holes</span></div>
-    </div>
-    <p><a class="cta" href="map.html">Open the index</a></p>
+  <main class="inquire">
+    <label class="kicker" for="q">Inquire</label>
+    <input id="q" type="search" autocomplete="off" spellcheck="false" autofocus />
+    <p class="ambient" id="ambient"></p>
+    <div id="out"></div>
   </main>
-  <script>
-    fetch("data/status.json")
-      .then((r) => r.json())
-      .then((s) => {
-        const n = (x) => Number(x || 0).toLocaleString();
-        const cells = document.querySelectorAll("#counts b");
-        cells[0].textContent = n(s.cameras);
-        cells[1].textContent = n(s.cameras_with_city);
-        cells[2].textContent = n(s.documents);
-        cells[3].textContent = n(s.missing_packets);
-      })
-      .catch(() => {});
-  </script>
+  <script src="search.js"></script>
 </body>
 </html>

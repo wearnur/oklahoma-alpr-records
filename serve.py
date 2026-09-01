@@ -8,6 +8,8 @@
   GET /v1/requests
   GET /v1/documents?city=
   GET /v1/status
+  GET /v1/cities
+  GET /v1/parcel?q=
   GET /docs/<file>.pdf
 """
 
@@ -15,11 +17,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
 WEB = HERE / "web"
 DOCS = HERE / "data" / "docs"
 
@@ -38,6 +42,13 @@ def _city_q(qs: dict) -> str:
 def api(path: str, qs: dict):
     if path in {"/v1/status", "/v1/status/"}:
         return _load("status.json") or {}
+    if path in {"/v1/cities", "/v1/cities/"}:
+        return _load("cities.json") or []
+    if path.startswith("/v1/parcel"):
+        from collectors.parcels import lookup
+
+        q = (qs.get("q") or qs.get("query") or [""])[0]
+        return lookup(q)
     if path in {"/v1/missing", "/v1/missing/"}:
         return _load("missing.json") or []
     if path in {"/v1/requests", "/v1/requests/"}:

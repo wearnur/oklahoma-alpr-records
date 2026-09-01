@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from collectors.parcels import sanitize
 from collectors.requests import guess_city_from_text, request_text
 from collectors.whoapproved import to_records as wat_records
 from export import export, infer_city
@@ -60,6 +61,13 @@ def test_export_writes_missing_json():
     assert all("city" in m and "cameras" in m for m in missing)
     status = json.loads((ROOT / "web" / "data" / "status.json").read_text(encoding="utf-8"))
     assert "missing_packets" in status
+    cities = json.loads((ROOT / "web" / "data" / "cities.json").read_text(encoding="utf-8"))
+    assert cities and "cameras" in cities[0] and "share_pct" in cities[0]
+
+
+def test_parcel_sanitize_strips_injection():
+    assert "'" not in sanitize("O'Brien; drop table")
+    assert len(sanitize("a" * 200)) == 80
 
 
 def test_whoapproved_filter_still_ok_only():

@@ -1,5 +1,17 @@
 [
   {
+    "city": "Oklahoma City",
+    "cameras": 399,
+    "has_contract_pdf": true,
+    "amount_usd": 270000,
+    "retention_days": 30,
+    "renewal_end": "2026-06-30",
+    "status": "flocked",
+    "km2": 2448.78,
+    "per_km2": 0.16,
+    "share_pct": 32.6
+  },
+  {
     "city": "Tulsa",
     "cameras": 310,
     "has_contract_pdf": false,
@@ -22,6 +34,18 @@
     "km2": 78.93,
     "per_km2": 0.82,
     "share_pct": 5.3
+  },
+  {
+    "city": "Broken Arrow",
+    "cameras": 63,
+    "has_contract_pdf": true,
+    "amount_usd": 18250,
+    "retention_days": 30,
+    "renewal_end": null,
+    "status": "flocked",
+    "km2": 447.92,
+    "per_km2": 0.14,
+    "share_pct": 5.1
   },
   {
     "city": "Edmond",
