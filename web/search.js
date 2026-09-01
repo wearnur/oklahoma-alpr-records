@@ -2,6 +2,9 @@ const $q = document.getElementById("q");
 const $out = document.getElementById("out");
 const $ambient = document.getElementById("ambient");
 const $suggest = document.getElementById("suggest");
+const $load = document.getElementById("load");
+const $loadFill = document.getElementById("load-fill");
+const $loadPct = document.getElementById("load-pct");
 
 let cities = [];
 let terms = [];
@@ -16,6 +19,73 @@ let timer;
 let suggestRows = [];
 let suggestI = -1;
 let selectedAccount = null;
+let loadSeq = 0;
+let loadTimer = null;
+
+function reduceMotion() {
+  return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function setLoad(n) {
+  if (!$loadFill || !$loadPct) return;
+  const v = Math.max(0, Math.min(100, Math.round(n)));
+  $loadFill.style.width = v + "%";
+  $loadPct.textContent = v + "%";
+}
+
+function startLoad() {
+  const seq = ++loadSeq;
+  document.body.classList.add("is-framed", "is-loading");
+  if ($load) $load.hidden = false;
+  if (reduceMotion()) {
+    setLoad(100);
+    return seq;
+  }
+  setLoad(0);
+  let p = 0;
+  clearInterval(loadTimer);
+  loadTimer = setInterval(() => {
+    if (seq !== loadSeq) return;
+    p += p < 38 ? 8 : p < 68 ? 3.2 : p < 88 ? 1.1 : 0.25;
+    if (p > 92) p = 92;
+    setLoad(p);
+  }, 45);
+  return seq;
+}
+
+function finishLoad(seq) {
+  if (seq !== loadSeq) return;
+  clearInterval(loadTimer);
+  setLoad(100);
+  document.body.classList.remove("is-loading");
+  const hide = () => {
+    if (seq !== loadSeq) return;
+    if ($load) $load.hidden = true;
+    setLoad(0);
+  };
+  if (reduceMotion()) hide();
+  else setTimeout(hide, 240);
+}
+
+function clearFrame() {
+  loadSeq += 1;
+  clearInterval(loadTimer);
+  document.body.classList.remove("is-framed", "is-loading");
+  if ($load) $load.hidden = true;
+  setLoad(0);
+}
+
+async function withLoad(fn) {
+  const seq = startLoad();
+  const t0 = Date.now();
+  try {
+    return await fn();
+  } finally {
+    const wait = reduceMotion() ? 0 : Math.max(0, 340 - (Date.now() - t0));
+    if (wait) await new Promise((r) => setTimeout(r, wait));
+    finishLoad(seq);
+  }
+}
 
 function money(n) {
   if (n == null || n === "") return null;
@@ -524,29 +594,31 @@ async function fetchParcels(q, account) {
 async function selectAccount(account, q) {
   selectedAccount = account;
   paintSuggest([]);
-  let parcels = null;
-  try {
-    parcels = await fetchParcels(q || $q.value.trim(), account);
-  } catch (e) {
-    parcels = null;
-  }
-  const chosen = (parcels && parcels.features || []).find((p) => p.account === account)
-    || (parcels && parcels.features && parcels.features[0]);
-  if (chosen && chosen.situs_display) $q.value = chosen.situs_display;
-  if (chosen) {
+  await withLoad(async () => {
+    let parcels = null;
     try {
-      chosen.clerk = await fetchClerk(chosen);
+      parcels = await fetchParcels(q || $q.value.trim(), account);
     } catch (e) {
-      chosen.clerk = null;
+      parcels = null;
     }
-  }
-  let land = null;
-  try {
-    if (globalThis.OKC && chosen) land = await OKC.lookupLand(chosen.situs_display || q);
-  } catch (e) {
-    land = null;
-  }
-  paint([], parcels, chosen, land);
+    const chosen = (parcels && parcels.features || []).find((p) => p.account === account)
+      || (parcels && parcels.features && parcels.features[0]);
+    if (chosen && chosen.situs_display) $q.value = chosen.situs_display;
+    if (chosen) {
+      try {
+        chosen.clerk = await fetchClerk(chosen);
+      } catch (e) {
+        chosen.clerk = null;
+      }
+    }
+    let land = null;
+    try {
+      if (globalThis.OKC && chosen) land = await OKC.lookupLand(chosen.situs_display || q);
+    } catch (e) {
+      land = null;
+    }
+    paint([], parcels, chosen, land);
+  });
 }
 
 async function run() {
@@ -556,50 +628,53 @@ async function run() {
     $ambient.hidden = false;
     paintSuggest([]);
     selectedAccount = null;
+    clearFrame();
     return;
   }
   $ambient.hidden = true;
   $ambient.textContent = "";
-  const hits = searchLocal(q).concat(extraLinks(q));
-  let parcels = null;
-  let land = null;
-  if (qLooksLikeParcel(q)) {
-    try {
-      parcels = await fetchParcels(q, selectedAccount);
-    } catch (e) {
-      parcels = null;
+  await withLoad(async () => {
+    const hits = searchLocal(q).concat(extraLinks(q));
+    let parcels = null;
+    let land = null;
+    if (qLooksLikeParcel(q)) {
+      try {
+        parcels = await fetchParcels(q, selectedAccount);
+      } catch (e) {
+        parcels = null;
+      }
+      try {
+        if (globalThis.OKC) land = await OKC.lookupLand(q);
+      } catch (e) {
+        land = null;
+      }
     }
-    try {
-      if (globalThis.OKC) land = await OKC.lookupLand(q);
-    } catch (e) {
-      land = null;
+    if ($q.value.trim() !== q) return;
+    const rows = (parcels && parcels.features) || [];
+    if (selectedAccount && rows.length) {
+      const chosen = rows.find((p) => p.account === selectedAccount) || rows[0];
+      try {
+        chosen.clerk = await fetchClerk(chosen);
+      } catch (e) {
+        chosen.clerk = null;
+      }
+      paintSuggest([]);
+      paint(hits, parcels, chosen, land);
+      return;
     }
-  }
-  if ($q.value.trim() !== q) return;
-  const rows = (parcels && parcels.features) || [];
-  if (selectedAccount && rows.length) {
-    const chosen = rows.find((p) => p.account === selectedAccount) || rows[0];
-    try {
-      chosen.clerk = await fetchClerk(chosen);
-    } catch (e) {
-      chosen.clerk = null;
+    selectedAccount = null;
+    const one = rows.length === 1 && /\d/.test(q);
+    const pick = one ? rows[0] : null;
+    if (pick) {
+      try {
+        pick.clerk = await fetchClerk(pick);
+      } catch (e) {
+        pick.clerk = null;
+      }
     }
-    paintSuggest([]);
-    paint(hits, parcels, chosen, land);
-    return;
-  }
-  selectedAccount = null;
-  const one = rows.length === 1 && /\d/.test(q);
-  const pick = one ? rows[0] : null;
-  if (pick) {
-    try {
-      pick.clerk = await fetchClerk(pick);
-    } catch (e) {
-      pick.clerk = null;
-    }
-  }
-  paintSuggest(one ? [] : rows);
-  paint(hits, parcels, pick, land);
+    paintSuggest(one ? [] : rows);
+    paint(hits, parcels, pick, land);
+  });
 }
 
 Promise.all([
@@ -665,29 +740,31 @@ if ($suggest) {
 async function openRoll(kind, value) {
   paintSuggest([]);
   $ambient.hidden = true;
-  if (!globalThis.OKParcels || typeof OKParcels.lookupBy !== "function") {
-    $out.innerHTML = rise(`<p class="muted">Assessor roll is unavailable.</p>`, 0);
-    return;
-  }
-  const payload = await OKParcels.lookupBy(kind, value, { limit: 40 });
-  const feats = payload.features || [];
-  const parts = [
-    rise(`<p class="kicker">Tax roll · ${esc(kind)} · ${feats.length}${feats.length === 40 ? "+" : ""}</p>`, 0),
-    rise(`<p class="muted">${esc(value)} — same assessor string, not beneficial ownership. Cap 40.</p>`, 1),
-  ];
-  if (payload.note && !feats.length) {
-    parts.push(rise(`<p class="muted">${esc(payload.note)}</p>`, 2));
-  }
-  feats.forEach((p, i) => {
-    parts.push(rise(
-      `<article class="hit" data-pick="${p.account || ""}">
-        <p>${esc(p.situs_display || p.situs || p.account)}</p>
-        <p class="muted">${esc(p.owner || "")} · market ${money(p.market) || "—"}</p>
-      </article>`,
-      i + 2
-    ));
+  await withLoad(async () => {
+    if (!globalThis.OKParcels || typeof OKParcels.lookupBy !== "function") {
+      $out.innerHTML = rise(`<p class="muted">Assessor roll is unavailable.</p>`, 0);
+      return;
+    }
+    const payload = await OKParcels.lookupBy(kind, value, { limit: 40 });
+    const feats = payload.features || [];
+    const parts = [
+      rise(`<p class="kicker">Tax roll · ${esc(kind)} · ${feats.length}${feats.length === 40 ? "+" : ""}</p>`, 0),
+      rise(`<p class="muted">${esc(value)} — same assessor string, not beneficial ownership. Cap 40.</p>`, 1),
+    ];
+    if (payload.note && !feats.length) {
+      parts.push(rise(`<p class="muted">${esc(payload.note)}</p>`, 2));
+    }
+    feats.forEach((p, i) => {
+      parts.push(rise(
+        `<article class="hit" data-pick="${p.account || ""}">
+          <p>${esc(p.situs_display || p.situs || p.account)}</p>
+          <p class="muted">${esc(p.owner || "")} · market ${money(p.market) || "—"}</p>
+        </article>`,
+        i + 2
+      ));
+    });
+    $out.innerHTML = parts.join("");
   });
-  $out.innerHTML = parts.join("");
 }
 
 $out.addEventListener("click", (e) => {
