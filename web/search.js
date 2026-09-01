@@ -58,19 +58,21 @@ function finishLoad(seq) {
   clearInterval(loadTimer);
   setLoad(100);
   document.body.classList.remove("is-loading");
+  document.body.classList.add("is-revealing");
   const hide = () => {
     if (seq !== loadSeq) return;
+    document.body.classList.remove("is-revealing");
     if ($load) $load.hidden = true;
     setLoad(0);
   };
   if (reduceMotion()) hide();
-  else setTimeout(hide, 240);
+  else setTimeout(hide, 480);
 }
 
 function clearFrame() {
   loadSeq += 1;
   clearInterval(loadTimer);
-  document.body.classList.remove("is-framed", "is-loading");
+  document.body.classList.remove("is-framed", "is-loading", "is-revealing");
   if ($load) $load.hidden = true;
   setLoad(0);
 }
@@ -81,7 +83,7 @@ async function withLoad(fn) {
   try {
     return await fn();
   } finally {
-    const wait = reduceMotion() ? 0 : Math.max(0, 340 - (Date.now() - t0));
+    const wait = reduceMotion() ? 0 : Math.max(0, 720 - (Date.now() - t0));
     if (wait) await new Promise((r) => setTimeout(r, wait));
     finishLoad(seq);
   }

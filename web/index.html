@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Oklahoma ALPR index</title>
-  <link rel="stylesheet" href="site.css?v=frame7" />
+  <link rel="stylesheet" href="site.css?v=hud1" />
 </head>
 <body class="inquire-page">
   <div class="frame" aria-hidden="true">
@@ -12,14 +12,26 @@
     <i class="frame-v east"></i>
     <i class="frame-h cap"></i>
     <i class="frame-h floor"></i>
+    <i class="frame-inner"></i>
+    <i class="hashes west"></i>
+    <i class="hashes east"></i>
+    <i class="pip west"></i>
+    <i class="pip east"></i>
     <b class="tick tl"></b>
     <b class="tick tr"></b>
     <b class="tick bl"></b>
     <b class="tick br"></b>
+    <b class="gate west n"></b>
+    <b class="gate west s"></b>
+    <b class="gate east n"></b>
+    <b class="gate east s"></b>
   </div>
+  <div id="mosaic" hidden aria-hidden="true"></div>
   <div id="load" hidden>
+    <p class="load-kicker">Inquire</p>
     <div class="load-track"><i id="load-fill"></i></div>
     <p id="load-pct">0%</p>
+    <p class="load-sub">assessor layer</p>
   </div>
   <header class="top">
     <a class="brand" href="index.html">Oklahoma ALPR index</a>
@@ -55,6 +67,7 @@
   <script src="viewer.js"></script>
   <script src="parcels.js?v=situs2"></script>
   <script src="okc.js"></script>
+  <script src="hud.js?v=hud1"></script>
   <script src="search.js?v=situs2"></script>
 </body>
 </html>
