@@ -43,6 +43,11 @@ a:hover { color: var(--mark); border-bottom-color: var(--mark); }
   background: var(--paper);
   border-bottom: 1px solid var(--line);
 }
+.inquire-page .top {
+  background: transparent;
+  border-bottom: 0;
+  padding: 0.8rem 1.35rem 0.5rem;
+}
 .brand {
   font-family: "IBM Plex Sans Condensed", sans-serif;
   letter-spacing: 0.28em;
@@ -76,11 +81,32 @@ nav a.on, nav a:hover { color: var(--ink); }
 }
 
 /* Inquire (home) */
-.inquire-page { min-height: 100vh; }
+.inquire-page {
+  --stage-top: 3.25rem;
+  --stage-side: 0.85rem;
+  --stage-bottom: 0.85rem;
+  min-height: 100vh;
+  background: #e2e2dc;
+  overflow: hidden;
+}
+.inquire-page.is-framed {
+  background: #d8d8d1;
+}
+.stage {
+  position: fixed;
+  z-index: 4;
+  top: var(--stage-top);
+  right: var(--stage-side);
+  bottom: var(--stage-bottom);
+  left: var(--stage-side);
+  background: var(--paper);
+  overflow: auto;
+  box-shadow: 0 10px 40px rgba(20, 20, 20, 0.12);
+}
 .inquire {
   max-width: 40rem;
   margin: 0 auto;
-  padding: 18vh 1.5rem 4rem;
+  padding: 7vh 1.5rem 4rem;
 }
 .inquire label { display: block; margin-bottom: 0.6rem; }
 .inquire #q {
@@ -382,7 +408,7 @@ body.pdf-open { overflow: hidden; }
 .frame { pointer-events: none; }
 .frame i, .frame b { display: block; font-style: normal; font-weight: 400; }
 
-/* Frame sits under the header. Do not use class "top" — that is the header. */
+/* Rails sit on the stage edge. Do not use class "top" — that is the header. */
 .frame-v, .frame-h {
   position: fixed;
   z-index: 6;
@@ -390,19 +416,19 @@ body.pdf-open { overflow: hidden; }
   opacity: 0.22;
 }
 .frame-v {
-  top: 3.45rem;
-  bottom: 0.7rem;
+  top: var(--stage-top);
+  bottom: var(--stage-bottom);
   width: 2px;
 }
-.frame-v.west { left: 0.7rem; }
-.frame-v.east { right: 0.7rem; }
+.frame-v.west { left: var(--stage-side); }
+.frame-v.east { right: var(--stage-side); }
 .frame-h {
-  left: 0.7rem;
-  right: 0.7rem;
+  left: var(--stage-side);
+  right: var(--stage-side);
   height: 2px;
 }
-.frame-h.cap { top: 3.45rem; }
-.frame-h.floor { bottom: 0.7rem; }
+.frame-h.cap { top: var(--stage-top); }
+.frame-h.floor { bottom: var(--stage-bottom); }
 
 .tick {
   position: fixed;
@@ -411,27 +437,10 @@ body.pdf-open { overflow: hidden; }
   height: 22px;
   opacity: 0.2;
 }
-.tick.tl { top: 3.45rem; left: 0.7rem; border-top: 3px solid var(--mark); border-left: 3px solid var(--mark); }
-.tick.tr { top: 3.45rem; right: 0.7rem; border-top: 3px solid var(--mark); border-right: 3px solid var(--mark); }
-.tick.bl { bottom: 0.7rem; left: 0.7rem; border-bottom: 3px solid var(--mark); border-left: 3px solid var(--mark); }
-.tick.br { bottom: 0.7rem; right: 0.7rem; border-bottom: 3px solid var(--mark); border-right: 3px solid var(--mark); }
-
-.inquire-page::after {
-  content: "";
-  position: fixed;
-  z-index: 5;
-  pointer-events: none;
-  top: 3.45rem;
-  right: 0.7rem;
-  bottom: 0.7rem;
-  left: 0.7rem;
-  box-shadow:
-    inset 0 0 0 1px rgba(20, 20, 20, 0.05),
-    inset 0 0 36px rgba(20, 20, 20, 0.08),
-    inset 0 0 92px rgba(20, 20, 20, 0.14);
-  opacity: 0.35;
-  transition: opacity 0.4s ease, box-shadow 0.4s ease;
-}
+.tick.tl { top: var(--stage-top); left: var(--stage-side); border-top: 3px solid var(--mark); border-left: 3px solid var(--mark); }
+.tick.tr { top: var(--stage-top); right: var(--stage-side); border-top: 3px solid var(--mark); border-right: 3px solid var(--mark); }
+.tick.bl { bottom: var(--stage-bottom); left: var(--stage-side); border-bottom: 3px solid var(--mark); border-left: 3px solid var(--mark); }
+.tick.br { bottom: var(--stage-bottom); right: var(--stage-side); border-bottom: 3px solid var(--mark); border-right: 3px solid var(--mark); }
 
 body.is-framed .frame-v,
 body.is-framed .frame-h {
@@ -443,12 +452,8 @@ body.is-framed .tick {
   opacity: 1;
   animation: tick-breathe 2.5s ease-in-out infinite;
 }
-body.is-framed.inquire-page::after {
-  opacity: 1;
-  box-shadow:
-    inset 0 0 0 1px rgba(20, 20, 20, 0.06),
-    inset 0 0 42px rgba(20, 20, 20, 0.12),
-    inset 0 0 110px rgba(20, 20, 20, 0.18);
+body.is-framed .stage {
+  box-shadow: 0 12px 48px rgba(20, 20, 20, 0.16);
 }
 
 @keyframes rail-breathe {
@@ -505,11 +510,12 @@ body.is-framed.inquire-page::after {
 
 .commands {
   position: fixed;
-  left: 1.25rem;
-  bottom: 1.25rem;
+  left: calc(var(--stage-side, 0.85rem) + 0.45rem);
+  bottom: calc(var(--stage-bottom, 0.85rem) + 0.4rem);
   max-width: 16rem;
   font-size: 12px;
   color: var(--mute);
+  z-index: 8;
 }
 .commands summary {
   cursor: pointer;
