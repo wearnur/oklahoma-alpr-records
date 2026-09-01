@@ -313,33 +313,63 @@ function startHone(p) {
   }, 1150);
 }
 
-function wingLine(kicker, text, delay) {
-  return `<p class="wing" style="animation-delay:${delay}s"><span>${esc(kicker)}</span>${esc(text)}</p>`;
+function cameraHref(c) {
+  if (c == null || typeof c.lat !== "number" || typeof c.lon !== "number") return "";
+  return "map.html?lat=" + encodeURIComponent(c.lat) + "&lng=" + encodeURIComponent(c.lon) + "&z=17";
+}
+
+function wingLine(item, delay) {
+  const inner = `<span>${esc(item.kicker)}</span>${esc(item.text)}`;
+  const delayStyle = `style="animation-delay:${delay}s"`;
+  if (item.href) {
+    const extra = item.go ? ` data-go="${esc(item.go)}"` : "";
+    return `<a class="wing" href="${esc(item.href)}"${extra} ${delayStyle}>${inner}</a>`;
+  }
+  if (item.roll) {
+    return `<button type="button" class="wing" data-roll="${esc(item.roll)}" data-value="${encodeURIComponent(item.value)}" ${delayStyle}>${inner}</button>`;
+  }
+  return `<p class="wing" ${delayStyle}>${inner}</p>`;
 }
 
 function fillWings(p, land) {
   const west = document.getElementById("wing-west");
   const east = document.getElementById("wing-east");
   if (!west || !east || !p) return;
+  const cityName = (p.city_index && p.city_index.city) || p.situs_city;
   const w = [];
-  if (p.situs_city) w.push(["City", p.situs_city]);
-  if (p.acct_type) w.push(["Type", p.acct_type]);
-  if (p.tax_district) w.push(["Tax dist.", p.tax_district]);
-  if (p.subdivision && isNamedSubdivision(p.subdivision)) w.push(["Plat", p.subdivision]);
-  if (p.owner) w.push(["Roll", p.owner]);
+  if (cityName) {
+    w.push({ kicker: "City", text: cityName, href: "map.html?city=" + encodeURIComponent(cityName), go: "index" });
+  }
+  if (p.acct_type) w.push({ kicker: "Type", text: p.acct_type });
+  if (p.tax_district) w.push({ kicker: "Tax dist.", text: p.tax_district });
+  if (p.subdivision && isNamedSubdivision(p.subdivision)) {
+    w.push({ kicker: "Plat", text: p.subdivision, roll: "subdivision", value: p.subdivision });
+  }
+  if (p.owner) w.push({ kicker: "Roll", text: p.owner, roll: "owner", value: p.owner });
   const e = [];
   (p.nearby_cameras || []).slice(0, 4).forEach((c) => {
-    e.push(["Camera", (dist(c.meters) ? dist(c.meters) + " · " : "") + (c.name || c.vendor || "mapped")]);
+    const href = cameraHref(c);
+    e.push({
+      kicker: "Camera",
+      text: (dist(c.meters) ? dist(c.meters) + " · " : "") + (c.name || c.vendor || "mapped"),
+      href: href || "",
+      go: href ? "index" : "",
+    });
   });
   ((land && land.features) || []).slice(0, 3).forEach((d) => {
-    e.push(["Land", d.address || d.reference || d.kind || "OKC land"]);
+    e.push({ kicker: "Land", text: d.address || d.reference || d.kind || "OKC land" });
   });
+  const portal = p.clerk && p.clerk.portal && p.clerk.portal.url;
   ((p.clerk && p.clerk.features) || []).slice(0, 2).forEach((d) => {
-    e.push(["Clerk", [d.type, d.date].filter(Boolean).join(" · ") || "instrument"]);
+    e.push({
+      kicker: "Clerk",
+      text: [d.type, d.date].filter(Boolean).join(" · ") || "instrument",
+      href: portal || "https://www.okcc.online/index.php#ROD-Addr",
+    });
   });
-  if (!e.length && p.account) e.push(["Account", p.account]);
-  west.innerHTML = w.map((row, i) => wingLine(row[0], row[1], 0.28 + i * 0.09)).join("");
-  east.innerHTML = e.map((row, i) => wingLine(row[0], row[1], 0.34 + i * 0.09)).join("");
+  if (!e.length && p.account) e.push({ kicker: "Account", text: p.account });
+  west.innerHTML = w.map((row, i) => wingLine(row, 0.28 + i * 0.09)).join("");
+  east.innerHTML = e.map((row, i) => wingLine(row, 0.34 + i * 0.09)).join("");
   west.hidden = !w.length;
   east.hidden = !e.length;
 }
@@ -368,12 +398,15 @@ function parcelDossier(p) {
       const label = esc(c.name || c.vendor || "camera");
       const hole = c.has_contract_pdf ? "" : " · packet missing";
       const city = c.city ? " · " + esc(c.city) : "";
-      return `<li>${dist(c.meters)} · ${label}${city}${hole}</li>`;
+      const href = cameraHref(c);
+      const text = `${dist(c.meters)} · ${label}${city}${hole}`;
+      if (!href) return `<li>${text}</li>`;
+      return `<li><a class="cam-go" data-go="index" href="${esc(href)}">${text}</a></li>`;
     })
     .join("");
   const req = p.request;
   const actions = [
-    `<a href="${mapHref}">Index map</a>`,
+    `<a href="${mapHref}" data-go="index">Index map</a>`,
     `<a href="https://ok-county-gis-hub-ok-co.hub.arcgis.com/" target="_blank" rel="noopener">County GIS</a>`,
     req && req.mailto ? `<a href="${req.mailto}">Email request</a>` : "",
     req && req.portal ? `<a href="${req.portal}" target="_blank" rel="noopener">Portal</a>` : "",
@@ -837,6 +870,8 @@ if ($suggest) {
 async function openRoll(kind, value) {
   paintSuggest([]);
   $ambient.hidden = true;
+  clearWings();
+  stopHone();
   await withLoad(async () => {
     if (!globalThis.OKParcels || typeof OKParcels.lookupBy !== "function") {
       $out.innerHTML = rise(`<p class="muted">Assessor roll is unavailable.</p>`, 0);
@@ -867,15 +902,32 @@ async function openRoll(kind, value) {
   });
 }
 
-$out.addEventListener("click", (e) => {
+function handleGo(e) {
   const roll = e.target.closest("[data-roll]");
   if (roll) {
     e.preventDefault();
     const kind = roll.getAttribute("data-roll");
     const value = decodeURIComponent(roll.getAttribute("data-value") || "");
     openRoll(kind, value);
-    return;
+    return true;
   }
+  const go = e.target.closest("a[data-go='index']");
+  if (go && go.href) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return false;
+    e.preventDefault();
+    if (globalThis.OKTransit) OKTransit.depart(go.href);
+    else location.href = go.href;
+    return true;
+  }
+  return false;
+}
+
+document.addEventListener("click", (e) => {
+  handleGo(e);
+});
+
+$out.addEventListener("click", (e) => {
+  if (e.target.closest("[data-roll]") || e.target.closest("a[data-go='index']")) return;
   const hit = e.target.closest("[data-pick]");
   if (!hit) return;
   selectAccount(hit.getAttribute("data-pick"), $q.value.trim());

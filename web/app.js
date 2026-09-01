@@ -48,6 +48,7 @@ function renderCameras(q) {
       fillColor: pinColor(p),
       fillOpacity: 0.9,
     }).addTo(layer);
+    m._feat = f;
     m.on("click", () => openDossier(f, m));
   });
 }
@@ -135,16 +136,11 @@ async function boot() {
   const city = params.get("city") || "";
   const lat = parseFloat(params.get("lat"));
   const lng = parseFloat(params.get("lng"));
-  if (Number.isFinite(lat) && Number.isFinite(lng)) {
+  const pinLat = Number.isFinite(lat) ? lat : null;
+  const pinLng = Number.isFinite(lng) ? lng : null;
+  if (pinLat != null && pinLng != null) {
     const z = Number(params.get("z") || 16);
-    map.setView([lat, lng], z);
-    L.circleMarker([lat, lng], {
-      radius: 8,
-      color: "#c4471a",
-      weight: 2,
-      fillColor: "#c4471a",
-      fillOpacity: 0.2,
-    }).addTo(map);
+    map.setView([pinLat, pinLng], z);
   } else if (city) {
     document.getElementById("q").value = city;
     const hit = cameras.find((f) => (f.properties || {}).city === city);
@@ -156,6 +152,31 @@ async function boot() {
   renderCameras(city);
   document.getElementById("q").addEventListener("input", (e) => renderCameras(e.target.value));
   setTimeout(() => map.invalidateSize(), 50);
+
+  function openNearest() {
+    if (pinLat == null || pinLng == null) return;
+    const target = L.latLng(pinLat, pinLng);
+    let best = null;
+    let bestD = Infinity;
+    layer.eachLayer((m) => {
+      if (!m.getLatLng || !m._feat) return;
+      const d = map.distance(m.getLatLng(), target);
+      if (d < bestD) {
+        bestD = d;
+        best = m;
+      }
+    });
+    if (best && bestD < 120) {
+      map.flyTo(best.getLatLng(), Number(params.get("z") || 16), { duration: 0.9 });
+      openDossier(best._feat, best);
+    }
+  }
+
+  if (globalThis.OKTransit) {
+    OKTransit.arrive(openNearest);
+  } else {
+    openNearest();
+  }
 }
 
 boot().catch((err) => {

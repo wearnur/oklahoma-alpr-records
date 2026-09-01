@@ -220,6 +220,20 @@ nav a.on, nav a:hover { color: var(--ink); }
   max-height: calc(100vh - var(--stage-top) - var(--stage-bottom) - 8rem);
   overflow: hidden;
 }
+.wings .wing { pointer-events: auto; }
+a.wing, button.wing {
+  display: block;
+  width: 100%;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  text-align: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+a.wing:hover, button.wing:hover { color: var(--mark); }
 .wings[hidden] { display: none; }
 .wings.west { left: calc(var(--stage-side) + 2.75rem); }
 .wings.east { right: calc(var(--stage-side) + 2.75rem); text-align: right; }
@@ -254,6 +268,8 @@ body.is-honing-done .parcel { opacity: 1; transition: opacity 0.28s ease; }
 .parcel { padding-top: 0.4rem; }
 .parcel .nearby { margin: 0.9rem 0 0; padding: 0; list-style: none; }
 .parcel .nearby li { margin: 0.35rem 0; font-size: 13px; font-weight: 300; }
+.parcel .nearby a.cam-go { border-bottom: 0; }
+.parcel .nearby a.cam-go:hover { color: var(--mark); }
 button.linkish {
   background: none;
   border: 0;
@@ -692,9 +708,63 @@ body.is-revealing #mosaic i {
   font-variant-numeric: tabular-nums;
 }
 
+#gate {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+}
+#gate[hidden] { display: none; }
+.gate-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  clip-path: circle(0% at 50% 50%);
+  transition: clip-path 0.56s cubic-bezier(.37,.01,.16,1);
+}
+#gate.on .gate-fill {
+  clip-path: circle(150% at 50% 50%);
+}
+body.is-arriving .gate-fill {
+  clip-path: circle(150% at 50% 50%);
+  transition: none;
+}
+body.is-arriving.is-open .gate-fill {
+  clip-path: circle(0% at 50% 50%);
+  transition: clip-path 0.56s cubic-bezier(.37,.01,.16,1);
+}
+.gate-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7.5rem;
+  height: 7.5rem;
+  margin: -3.75rem 0 0 -3.75rem;
+  border: 1px solid #8e8e86;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+body.is-departing .gate-ring,
+body.is-arriving .gate-ring {
+  animation: gate-spin 0.58s ease forwards;
+}
+.gate-ring.b {
+  width: 12rem;
+  height: 12rem;
+  margin: -6rem 0 0 -6rem;
+  animation-delay: 0.07s;
+}
+@keyframes gate-spin {
+  0% { transform: scale(0.35) rotate(0deg); opacity: 0.15; }
+  50% { opacity: 0.75; }
+  100% { transform: scale(3.1) rotate(42deg); opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .rail, .tick, .hash-col, .pip, #load-fill, #mosaic i,
-  .hone-ring, .hone-name, .hone-acct, .hone-kicker, .wing {
+  .hone-ring, .hone-name, .hone-acct, .hone-kicker, .wing,
+  .gate-fill, .gate-ring {
     transition: none;
     animation: none !important;
   }
