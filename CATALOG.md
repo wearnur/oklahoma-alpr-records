@@ -2,6 +2,8 @@
 
 This is the memory list. One named class at a time. Inquire searches **live** rows. Everything else is next, a link-out, metered, or a no.
 
+**Focus:** Oklahoma City / Oklahoma County until one address is dense. Tulsa, Cleveland, and other cities stay parked.
+
 Status: `live` · `next` · `link` · `metered` · `no`
 
 ## Live
@@ -18,16 +20,18 @@ Status: `live` · `next` · `link` · `metered` · `no`
 
 | ID | Class | Notes |
 |---|---|---|
-| tulsa-parcel | Tulsa County assessor parcels | Same pattern as Oklahoma County. |
-| cleveland-parcel | Cleveland County (Norman) parcels | Same pattern. |
+| tulsa-parcel | Tulsa County assessor parcels | Parked until OKC is dense. |
+| cleveland-parcel | Cleveland County (Norman) parcels | Parked. |
+| ok-county-clerk | Oklahoma County recorded deeds / mortgages | OKCC.online. Attach to the parcel card. Not leases. |
+| okc-311 | OKC 311 / service requests | data.okc.gov if no key. Address-join. |
+| okc-permits | OKC building permits | Same portal. Address-join. |
+| okc-business-license | OKC business licenses | Same portal. Phone only if printed on the filing. |
 | ok-sos-entity | Oklahoma SOS business entities | Name, filing number, status, registered agent. |
 | oscn-docket | OSCN state court dockets | Public HTML. Case style, filings, not sealed/juvenile. |
-| ok-county-clerk | Recorded documents | Deeds, mortgages, *recorded* instruments. Not residential leases. |
-| okc-311 | OKC 311 / code cases | If a public feed exists. |
 | municode | Municipal ordinances | Link + cite, not a full copy. |
 | ethics-ok | State campaign finance | ethics.ok.gov. |
 | usaspending | Federal awards | API live; OK Flock was 0. |
-| business-license | City business licenses | Per-city portals. |
+| civic-phone | Published city/county office numbers | 311, clerk, assessor, records. Not a person. |
 | property-sales | Recorded sale price | Prefer assessor `SalePrice` / clerk, not Zillow. |
 
 ## Link-out only (do not ingest into a person graph)
@@ -59,6 +63,7 @@ Status: `live` · `next` · `link` · `metered` · `no`
 | juvenile | Juvenile court | Sealed / protected. |
 | locate-minors | Anything to find a child | No. |
 | unlisted-contact | Phones, emails not in a filing | Not public. |
+| phone-reverse | Reverse-lookup a cell / Whitepages / Truecaller | Not a public record. Skip-trace is a person index. If a number is printed on a filing we already have, show that filing. |
 | bank-medical | Financial / medical | Not public. |
 
 ## Product rule
