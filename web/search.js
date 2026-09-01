@@ -83,7 +83,7 @@ async function withLoad(fn) {
   try {
     return await fn();
   } finally {
-    const wait = reduceMotion() ? 0 : Math.max(0, 720 - (Date.now() - t0));
+    const wait = reduceMotion() ? 0 : Math.max(0, 280 - (Date.now() - t0));
     if (wait) await new Promise((r) => setTimeout(r, wait));
     finishLoad(seq);
   }

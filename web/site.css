@@ -405,35 +405,39 @@ td.num { font-variant-numeric: tabular-nums; }
 body.pdf-open { overflow: hidden; }
 
 .frame { pointer-events: none; }
-.frame i, .frame b { display: block; font-style: normal; font-weight: 400; }
+.frame i, .frame b, .frame span { display: block; font-style: normal; font-weight: 400; }
 
-/* Rails sit on the stage edge. Do not use class "top" — that is the header. */
-.frame-v, .frame-h {
+/* Side posts + L-brackets. No top/bottom bars — those clipped the page. */
+.rail {
   position: fixed;
   z-index: 6;
-  background: #b3b3ab;
-  opacity: 0.22;
-}
-.frame-v {
   top: var(--stage-top);
   bottom: var(--stage-bottom);
   width: 2px;
+  background: #b3b3ab;
+  opacity: 0.2;
 }
-.frame-v.west { left: var(--stage-side); }
-.frame-v.east { right: var(--stage-side); }
-.frame-h {
-  left: var(--stage-side);
-  right: var(--stage-side);
-  height: 2px;
+.rail.west { left: var(--stage-side); }
+.rail.east { right: var(--stage-side); }
+
+.bracket {
+  position: fixed;
+  z-index: 6;
+  width: 26px;
+  height: 26px;
+  opacity: 0;
+  border-color: #8e8e86;
 }
-.frame-h.cap { top: var(--stage-top); }
-.frame-h.floor { bottom: var(--stage-bottom); }
+.bracket.tl { top: var(--stage-top); left: var(--stage-side); border-top: 2px solid; border-left: 2px solid; }
+.bracket.tr { top: var(--stage-top); right: var(--stage-side); border-top: 2px solid; border-right: 2px solid; }
+.bracket.bl { bottom: var(--stage-bottom); left: var(--stage-side); border-bottom: 2px solid; border-left: 2px solid; }
+.bracket.br { bottom: var(--stage-bottom); right: var(--stage-side); border-bottom: 2px solid; border-right: 2px solid; }
 
 .tick {
   position: fixed;
   z-index: 7;
-  width: 22px;
-  height: 22px;
+  width: 14px;
+  height: 14px;
   opacity: 0.2;
 }
 .tick.tl { top: var(--stage-top); left: var(--stage-side); border-top: 3px solid #c12f14; border-left: 3px solid #c12f14; }
@@ -441,75 +445,56 @@ body.pdf-open { overflow: hidden; }
 .tick.bl { bottom: var(--stage-bottom); left: var(--stage-side); border-bottom: 3px solid #c12f14; border-left: 3px solid #c12f14; }
 .tick.br { bottom: var(--stage-bottom); right: var(--stage-side); border-bottom: 3px solid #c12f14; border-right: 3px solid #c12f14; }
 
-.frame-inner {
+.hash-col {
   position: fixed;
   z-index: 6;
-  top: calc(var(--stage-top) + 11px);
-  right: calc(var(--stage-side) + 11px);
-  bottom: calc(var(--stage-bottom) + 11px);
-  left: calc(var(--stage-side) + 11px);
-  border: 1px solid #b3b3ab;
-  background: none;
+  width: 16px;
+  top: calc(var(--stage-top) + 32px);
+  bottom: calc(var(--stage-bottom) + 32px);
   opacity: 0;
 }
-.hashes {
-  position: fixed;
-  z-index: 6;
-  width: 6px;
-  top: calc(var(--stage-top) + 26px);
-  bottom: calc(var(--stage-bottom) + 26px);
-  opacity: 0;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    #8e8e86 0 1px,
-    transparent 1px 4px,
-    #8e8e86 4px 5px,
-    transparent 5px 13px
-  );
-  background-size: 100% 26px;
+.hash-col.west { left: calc(var(--stage-side) + 6px); }
+.hash-col.east { right: calc(var(--stage-side) + 6px); }
+.hash-col i {
+  position: absolute;
+  left: 0;
+  background: #8e8e86;
 }
-.hashes.west { left: calc(var(--stage-side) + 7px); }
-.hashes.east { right: calc(var(--stage-side) + 7px); }
+.hash-col.east i { left: auto; right: 0; }
+
 .pip {
   position: fixed;
   z-index: 7;
   width: 2px;
-  height: 12px;
+  height: 11px;
   background: #c12f14;
   opacity: 0;
   top: calc(var(--stage-top) + 10px);
 }
 .pip.west { left: var(--stage-side); }
 .pip.east { right: var(--stage-side); }
-.gate {
-  position: fixed;
-  z-index: 7;
-  width: 11px;
-  height: 11px;
-  opacity: 0;
-}
-.gate.west { left: var(--stage-side); border-left: 2px solid #8e8e86; }
-.gate.east { right: var(--stage-side); border-right: 2px solid #8e8e86; }
-.gate.n { top: calc(var(--stage-top) + 24%); border-top: 2px solid #8e8e86; }
-.gate.s { bottom: calc(var(--stage-bottom) + 24%); border-bottom: 2px solid #8e8e86; }
 
-body.is-framed .frame-v,
-body.is-framed .frame-h {
+body.is-framed .rail {
   opacity: 1;
   background: #8e8e86;
-  animation: rail-breathe 2.5s ease-in-out infinite;
+  animation: rail-breathe var(--rail-dur, 2.6s) ease-in-out infinite;
 }
+body.is-framed .bracket { opacity: 0.85; }
 body.is-framed .tick { opacity: 1; }
-body.is-framed .frame-inner { opacity: 0.42; }
-body.is-framed .hashes {
-  opacity: 0.5;
-  animation: hash-crawl 11s linear infinite;
-}
-body.is-framed .hashes.east { animation-direction: reverse; animation-duration: 13s; }
+body.is-framed .hash-col { opacity: 1; }
 body.is-framed .pip { opacity: 0.95; }
-body.is-framed .pip.west { animation: pip-run 6.4s linear infinite; }
-body.is-framed .pip.east { animation: pip-run 7.1s linear infinite reverse; }
-body.is-framed .gate { opacity: 0.9; }
+body.is-framed .pip.west { animation: pip-run var(--pip-dur, 6.4s) linear infinite; }
+body.is-framed .pip.east { animation: pip-run var(--pip-dur-2, 7.1s) linear infinite reverse; }
+body.is-framed.hud-flip-pip .pip.west { animation-direction: reverse; }
+body.is-framed.hud-flip-pip .pip.east { animation-direction: normal; }
+body.is-framed.hud-quiet-east .hash-col.east,
+body.is-framed.hud-quiet-east .pip.east { opacity: 0.28; }
+body.is-framed.hud-wide-bracket .bracket { width: 38px; height: 38px; }
+body[data-hud="sparse"] .rail { opacity: 0.45; }
+body[data-hud="burst"] .pip { height: 18px; }
+body[data-hud="cluster"] .hash-col.west { animation: hash-drift 9s ease-in-out infinite; }
+body[data-hud="stagger"] .hash-col.east { animation: hash-drift 11s ease-in-out infinite reverse; }
+body[data-hud="doublet"] .bracket { width: 22px; height: 34px; }
 body.is-framed .stage {
   box-shadow:
     0 0 28px rgba(20, 20, 20, 0.14),
@@ -517,12 +502,12 @@ body.is-framed .stage {
 }
 
 @keyframes rail-breathe {
-  0%, 100% { opacity: 0.55; }
+  0%, 100% { opacity: 0.5; }
   50% { opacity: 1; }
 }
-@keyframes hash-crawl {
-  from { background-position: 0 0; }
-  to { background-position: 0 26px; }
+@keyframes hash-drift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
 }
 @keyframes pip-run {
   from { top: calc(var(--stage-top) + 10px); }
@@ -624,7 +609,7 @@ body.is-revealing #mosaic i {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .frame-v, .frame-h, .tick, .hashes, .pip, #load-fill, #mosaic i {
+  .rail, .tick, .hash-col, .pip, #load-fill, #mosaic i {
     transition: none;
     animation: none !important;
   }
