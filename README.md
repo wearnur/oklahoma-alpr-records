@@ -21,7 +21,9 @@ Open http://127.0.0.1:8765/
 
 Pages: **home is search** (city, contract, document, Oklahoma County address / recorded sale). Map is the spatial index. Missing / records are lists.
 
-`GET /v1/parcel?q=508+S+MAIN+ST` — Oklahoma County assessor live lookup (not a local dump). Home search autocompletes situs, then shows market / assessed / recorded sale if published, plus mapped cameras within a mile and the city packet. `?account=` pins one parcel. See `CATALOG.md`. We do not scrape Zillow or build a person dossier.
+`GET /v1/parcel?q=508+S+MAIN+ST` — Oklahoma County assessor live lookup (not a local dump). Home search autocompletes situs, then shows market / assessed / recorded sale if published, plus mapped cameras within a mile and the city packet. `?account=` pins one parcel.
+
+`GET /v1/okc` — labeled Oklahoma City open-data catalog. `GET /v1/okc/land?q=` — city land documents. 311 / building permits / business licenses are **absent** on data.okc.gov; we label the holes instead of faking rows. See `CATALOG.md`. We do not scrape Zillow or build a person dossier.
 
 Click a pin for the **dossier** (terms, PDF, Street View, copy-ready Open Records text). Missing packets are the default tab.
 

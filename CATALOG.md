@@ -15,6 +15,19 @@ Status: `live` · `next` · `link` · `metered` · `no`
 | alpr-terms | Extracted retention, dollars, sharing | From those PDFs. |
 | ok-county-parcel | Oklahoma County parcels | Live assessor query. Autocomplete situs. Owner, market, assessed, land, recorded sale if published, nearby mapped cameras, city packet. |
 | alpr-density | Cameras / km² and share of index | Computed. |
+| okc-opendata | OKC data.okc.gov catalog | 81 datasets labeled. Small civic tables pulled. Huge GIS is live-query. |
+| okc-land-docs | OKC land documents | City layer (grantor, address, instrument). Not the county clerk. |
+| okc-civic-facility | Police / fire / city facilities | Pulled. |
+| okc-zoning | Straight / overlay zoning | Live-query (22k polygons). |
+| okc-address | City address points | Live-query (326k). County assessor remains the house search. |
+
+## Absent on data.okc.gov (labeled holes)
+
+| ID | Class | Notes |
+|---|---|---|
+| okc-311 | OKC 311 / service requests | Not in the DCAT catalog. |
+| okc-permits | OKC building permits | Only garage-sale permits exist. |
+| okc-license | OKC business licenses | No table on this portal. |
 
 ## Next (public, $0, bounded)
 
@@ -23,9 +36,6 @@ Status: `live` · `next` · `link` · `metered` · `no`
 | tulsa-parcel | Tulsa County assessor parcels | Parked until OKC is dense. |
 | cleveland-parcel | Cleveland County (Norman) parcels | Parked. |
 | ok-county-clerk | Oklahoma County recorded deeds / mortgages | OKCC.online. Attach to the parcel card. Not leases. |
-| okc-311 | OKC 311 / service requests | data.okc.gov if no key. Address-join. |
-| okc-permits | OKC building permits | Same portal. Address-join. |
-| okc-business-license | OKC business licenses | Same portal. Phone only if printed on the filing. |
 | ok-sos-entity | Oklahoma SOS business entities | Name, filing number, status, registered agent. |
 | oscn-docket | OSCN state court dockets | Public HTML. Case style, filings, not sealed/juvenile. |
 | municode | Municipal ordinances | Link + cite, not a full copy. |

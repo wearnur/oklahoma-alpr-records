@@ -8,6 +8,8 @@ let terms = [];
 let documents = [];
 let requests = [];
 let catalog = [];
+let okcCatalog = { items: [] };
+let okcRows = [];
 let status = {};
 let tick = 0;
 let timer;
@@ -116,6 +118,20 @@ function searchLocal(q) {
       hits.push({ kind: "catalog", row });
     }
   });
+  (okcCatalog.items || []).forEach((row) => {
+    const blob = `${row.title || ""} ${row.class || ""} ${row.status || ""}`.toLowerCase();
+    if (
+      needle === "catalog" ||
+      needle === "okc" ||
+      (needle.length >= 3 && blob.includes(needle))
+    ) {
+      hits.push({ kind: "okc-layer", row });
+    }
+  });
+  okcRows.forEach((row) => {
+    const blob = `${row.name || ""} ${row.address || ""} ${row.layer || ""} ${row.class || ""}`.toLowerCase();
+    if (needle.length >= 3 && blob.includes(needle)) hits.push({ kind: "okc-row", row });
+  });
   return hits.slice(0, 14);
 }
 
@@ -195,7 +211,23 @@ function paintSuggest(rows) {
     .join("");
 }
 
-function paint(hits, parcels, chosen) {
+function paintLand(docs, i0) {
+  const feats = (docs && docs.features) || [];
+  if (!feats.length) return [];
+  const parts = [rise(`<p class="kicker">OKC land documents · ${feats.length}</p>`, i0)];
+  feats.forEach((d, n) => {
+    parts.push(rise(
+      `<article class="hit">
+        <p>${esc(d.address || d.location || d.reference || "")}</p>
+        <p class="muted">${esc(d.kind || "")} ${esc(d.number || "")} · ${esc(d.date || "")} · ${esc(d.grantor || "")}</p>
+      </article>`,
+      i0 + 1 + n
+    ));
+  });
+  return parts;
+}
+
+function paint(hits, parcels, chosen, land) {
   const parts = [];
   let i = 0;
   const addressQ = qLooksLikeParcel($q.value) && /\d/.test($q.value);
@@ -248,6 +280,30 @@ function paint(hits, parcels, chosen) {
           i++
         ));
       }
+      if (h.kind === "okc-layer") {
+        const r = h.row;
+        const n = r.count != null ? r.count.toLocaleString() : "";
+        parts.push(rise(
+          `<article class="hit">
+            <p class="kicker">${esc(r.status || "okc")} · ${esc(r.class || "")}</p>
+            <p>${esc(r.title || "")}${n ? " · " + n + " records" : ""}</p>
+            ${r.note ? `<p class="muted">${esc(r.note)}</p>` : ""}
+            ${r.landing ? `<p class="actions"><a href="${esc(r.landing)}" target="_blank" rel="noopener">Source</a></p>` : ""}
+          </article>`,
+          i++
+        ));
+      }
+      if (h.kind === "okc-row") {
+        const r = h.row;
+        parts.push(rise(
+          `<article class="hit">
+            <p class="kicker">${esc(r.layer || r.class || "OKC")}</p>
+            <p>${esc(r.name || r.address || "")}</p>
+            <p class="muted">${esc(r.address || "")}</p>
+          </article>`,
+          i++
+        ));
+      }
     });
   }
   if (!chosen && parcels && parcels.features && parcels.features.length > 1) {
@@ -264,8 +320,9 @@ function paint(hits, parcels, chosen) {
       ));
     });
   } else if (parcels && parcels.ok && addressQ && !(parcels.features || []).length && !chosen) {
-    parts.push(rise(`<p class="muted">No Oklahoma County parcel. Recorded sales come from the assessor, not Zillow. Leases are not public. Tulsa County is next.</p>`, i++));
+    parts.push(rise(`<p class="muted">No Oklahoma County parcel. Recorded sales come from the assessor, not Zillow. Leases are not public.</p>`, i++));
   }
+  paintLand(land, i).forEach((el) => parts.push(el));
   if (!parts.length) {
     parts.push(rise(`<p class="muted">Nothing in the index.</p>`, 0));
   }
@@ -344,7 +401,13 @@ async function selectAccount(account, q) {
   const chosen = (parcels && parcels.features || []).find((p) => p.account === account)
     || (parcels && parcels.features && parcels.features[0]);
   if (chosen && chosen.situs_display) $q.value = chosen.situs_display;
-  paint([], parcels, chosen);
+  let land = null;
+  try {
+    if (globalThis.OKC && chosen) land = await OKC.lookupLand(chosen.situs_display || q);
+  } catch (e) {
+    land = null;
+  }
+  paint([], parcels, chosen, land);
 }
 
 async function run() {
@@ -360,11 +423,17 @@ async function run() {
   $ambient.textContent = "";
   const hits = searchLocal(q).concat(extraLinks(q));
   let parcels = null;
+  let land = null;
   if (qLooksLikeParcel(q)) {
     try {
       parcels = await fetchParcels(q, selectedAccount);
     } catch (e) {
       parcels = null;
+    }
+    try {
+      if (globalThis.OKC) land = await OKC.lookupLand(q);
+    } catch (e) {
+      land = null;
     }
   }
   if ($q.value.trim() !== q) return;
@@ -372,13 +441,13 @@ async function run() {
   if (selectedAccount && rows.length) {
     const chosen = rows.find((p) => p.account === selectedAccount) || rows[0];
     paintSuggest([]);
-    paint(hits, parcels, chosen);
+    paint(hits, parcels, chosen, land);
     return;
   }
   selectedAccount = null;
   const one = rows.length === 1 && /\d/.test(q);
   paintSuggest(one ? [] : rows);
-  paint(hits, parcels, one ? rows[0] : null);
+  paint(hits, parcels, one ? rows[0] : null, land);
 }
 
 Promise.all([
@@ -388,13 +457,17 @@ Promise.all([
   fetch("data/requests.json").then((r) => r.json()).catch(() => []),
   fetch("data/status.json").then((r) => r.json()),
   fetch("data/catalog.json").then((r) => r.json()).catch(() => []),
-]).then(([c, t, d, r, s, cat]) => {
+  fetch("data/okc-catalog.json").then((r) => r.json()).catch(() => ({ items: [] })),
+  fetch("data/okc-rows.json").then((r) => r.json()).catch(() => ({ rows: [] })),
+]).then(([c, t, d, r, s, cat, okc, rows]) => {
   cities = c.sort((a, b) => (b.cameras || 0) - (a.cameras || 0));
   terms = t;
   documents = d;
   requests = r;
   status = s;
   catalog = cat;
+  okcCatalog = okc || { items: [] };
+  okcRows = (rows && rows.rows) || [];
   renderAmbient();
   setInterval(renderAmbient, 4200);
 });

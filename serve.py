@@ -10,6 +10,8 @@
   GET /v1/status
   GET /v1/cities
   GET /v1/parcel?q=&account=
+  GET /v1/okc
+  GET /v1/okc/land?q=
   GET /docs/<file>.pdf
 """
 
@@ -93,6 +95,13 @@ def api(path: str, qs: dict):
         return _load("status.json") or {}
     if path in {"/v1/cities", "/v1/cities/"}:
         return _load("cities.json") or []
+    if path in {"/v1/okc", "/v1/okc/"}:
+        return _load("okc-catalog.json") or {"error": "okc catalog missing — run ingest"}
+    if path.startswith("/v1/okc/land"):
+        from collectors.okc_opendata import lookup_land
+
+        q = (qs.get("q") or qs.get("query") or [""])[0]
+        return lookup_land(q)
     if path.startswith("/v1/parcel"):
         from collectors.parcels import lookup
 

@@ -21,6 +21,7 @@ from collectors.usaspending import fetch as fetch_usa
 from collectors.usaspending import to_records as usa_records
 from collectors.whoapproved import fetch as fetch_wat
 from collectors.whoapproved import to_records as wat_records
+from collectors.okc_opendata import ingest as ingest_okc
 
 
 def _write_jsonl(path: Path, rows: list[dict]) -> None:
@@ -87,6 +88,18 @@ def ingest(force: bool = False) -> dict:
         errors.append(f"whoapproved: {exc}")
         wat_n = 0
 
+    try:
+        okc_summary = ingest_okc(DATA / "okc", HERE / "web" / "data", force=force)
+        okc_n = okc_summary.get("layers") or 0
+        (INDEX / "okc-catalog.json").write_text(
+            (HERE / "web" / "data" / "okc-catalog.json").read_text(encoding="utf-8"),
+            encoding="utf-8",
+        )
+    except Exception as exc:  # noqa: BLE001
+        errors.append(f"okc_opendata: {exc}")
+        okc_n = 0
+        okc_summary = {}
+
     # De-dupe by id, last writer wins.
     by_id = {r["id"]: r for r in rows}
     merged = list(by_id.values())
@@ -97,6 +110,9 @@ def ingest(force: bool = False) -> dict:
         "ok_awards": usa_n,
         "okc_documents": docs_n,
         "whoapproved_ok": wat_n,
+        "okc_layers": okc_n,
+        "okc_pulled": (okc_summary or {}).get("pulled_rows"),
+        "okc_absent": (okc_summary or {}).get("absent"),
         "merged": len(merged),
         "errors": errors,
         "index": str(INDEX / "records.jsonl"),
