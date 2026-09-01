@@ -149,6 +149,107 @@ nav a.on, nav a:hover { color: var(--ink); }
 #suggest li .muted { display: block; font-size: 12px; }
 #suggest li.on,
 #suggest li:hover { color: var(--mark); }
+#hone {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  background: transparent;
+}
+#hone[hidden] { display: none; }
+.hone-ring {
+  position: absolute;
+  width: min(62vmin, 26rem);
+  height: min(62vmin, 26rem);
+  border: 1px solid #c8c8c0;
+  border-radius: 50%;
+  animation: ring-shrink 1.1s ease forwards;
+}
+.hone-kicker {
+  position: relative;
+  margin: 0 0 0.6rem;
+  font-family: "IBM Plex Sans Condensed", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mute);
+  animation: hone-fade 1.1s ease forwards;
+}
+.hone-name {
+  position: relative;
+  margin: 0;
+  font-weight: 300;
+  font-size: clamp(2rem, 5.4vw, 3.3rem);
+  letter-spacing: 0.06em;
+  text-align: center;
+  animation: hone-settle 1.1s ease forwards;
+}
+.hone-acct {
+  position: relative;
+  margin: 0.55rem 0 0;
+  font-family: "IBM Plex Sans Condensed", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mute);
+  animation: hone-fade 1.1s ease forwards;
+}
+@keyframes hone-settle {
+  0% { transform: scale(1.18); letter-spacing: 0.14em; opacity: 0.2; }
+  28% { opacity: 1; }
+  100% { transform: scale(0.42) translateY(18vh); letter-spacing: -0.03em; opacity: 0; }
+}
+@keyframes hone-fade {
+  0%, 45% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes ring-shrink {
+  0% { transform: scale(1.28); opacity: 0.55; }
+  100% { transform: scale(0.38); opacity: 0; }
+}
+.wings {
+  position: absolute;
+  top: 16%;
+  width: 10.5rem;
+  z-index: 5;
+  pointer-events: none;
+}
+.wings[hidden] { display: none; }
+.wings.west { left: 1rem; }
+.wings.east { right: 1rem; text-align: right; }
+.wing {
+  margin: 0 0 0.7rem;
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--ink);
+  opacity: 0;
+  animation: wing-in 0.45s ease forwards;
+}
+.wing span {
+  display: block;
+  margin-bottom: 0.15rem;
+  font-family: "IBM Plex Sans Condensed", sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+.wings.east .wing span { margin-left: auto; }
+@keyframes wing-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 0.72; transform: none; }
+}
+body.is-honing .parcel { opacity: 0.28; }
+body.is-honing .parcel h2 { opacity: 0; }
+body.is-honing-done .parcel { opacity: 1; transition: opacity 0.28s ease; }
+@media (max-width: 1180px) {
+  .wings { display: none; }
+}
+
 .parcel { padding-top: 0.4rem; }
 .parcel h2 {
   font-weight: 300;
@@ -609,7 +710,8 @@ body.is-revealing #mosaic i {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rail, .tick, .hash-col, .pip, #load-fill, #mosaic i {
+  .rail, .tick, .hash-col, .pip, #load-fill, #mosaic i,
+  .hone-ring, .hone-name, .hone-acct, .hone-kicker, .wing {
     transition: none;
     animation: none !important;
   }

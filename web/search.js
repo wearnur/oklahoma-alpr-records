@@ -21,6 +21,7 @@ let suggestI = -1;
 let selectedAccount = null;
 let loadSeq = 0;
 let loadTimer = null;
+let honeTimer = null;
 
 function reduceMotion() {
   return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -75,6 +76,8 @@ function clearFrame() {
   document.body.classList.remove("is-framed", "is-loading", "is-revealing");
   if ($load) $load.hidden = true;
   setLoad(0);
+  stopHone();
+  clearWings();
 }
 
 async function withLoad(fn) {
@@ -281,6 +284,75 @@ function searchLocal(q) {
   return hits.slice(0, 14);
 }
 
+function stopHone() {
+  clearTimeout(honeTimer);
+  document.body.classList.remove("is-honing", "is-honing-done");
+  const el = document.getElementById("hone");
+  if (el) el.hidden = true;
+}
+
+function startHone(p) {
+  const el = document.getElementById("hone");
+  if (!el || !p) return;
+  const name = el.querySelector(".hone-name");
+  const acct = el.querySelector(".hone-acct");
+  if (name) name.textContent = situsLabel(p);
+  if (acct) acct.textContent = p.account || "";
+  if (reduceMotion()) {
+    stopHone();
+    return;
+  }
+  el.hidden = false;
+  document.body.classList.add("is-honing");
+  document.body.classList.remove("is-honing-done");
+  clearTimeout(honeTimer);
+  honeTimer = setTimeout(() => {
+    document.body.classList.remove("is-honing");
+    document.body.classList.add("is-honing-done");
+    el.hidden = true;
+  }, 1150);
+}
+
+function wingLine(kicker, text, delay) {
+  return `<p class="wing" style="animation-delay:${delay}s"><span>${esc(kicker)}</span>${esc(text)}</p>`;
+}
+
+function fillWings(p, land) {
+  const west = document.getElementById("wing-west");
+  const east = document.getElementById("wing-east");
+  if (!west || !east || !p) return;
+  const w = [];
+  if (p.situs_city) w.push(["City", p.situs_city]);
+  if (p.acct_type) w.push(["Type", p.acct_type]);
+  if (p.tax_district) w.push(["Tax dist.", p.tax_district]);
+  if (p.subdivision && isNamedSubdivision(p.subdivision)) w.push(["Plat", p.subdivision]);
+  if (p.owner) w.push(["Roll", p.owner]);
+  const e = [];
+  (p.nearby_cameras || []).slice(0, 4).forEach((c) => {
+    e.push(["Camera", (dist(c.meters) ? dist(c.meters) + " · " : "") + (c.name || c.vendor || "mapped")]);
+  });
+  ((land && land.features) || []).slice(0, 3).forEach((d) => {
+    e.push(["Land", d.address || d.reference || d.kind || "OKC land"]);
+  });
+  ((p.clerk && p.clerk.features) || []).slice(0, 2).forEach((d) => {
+    e.push(["Clerk", [d.type, d.date].filter(Boolean).join(" · ") || "instrument"]);
+  });
+  if (!e.length && p.account) e.push(["Account", p.account]);
+  west.innerHTML = w.map((row, i) => wingLine(row[0], row[1], 0.28 + i * 0.09)).join("");
+  east.innerHTML = e.map((row, i) => wingLine(row[0], row[1], 0.34 + i * 0.09)).join("");
+  west.hidden = !w.length;
+  east.hidden = !e.length;
+}
+
+function clearWings() {
+  ["wing-west", "wing-east"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.hidden = true;
+    el.innerHTML = "";
+  });
+}
+
 function parcelDossier(p) {
   const sold = p.sale_price
     ? `${money(p.sale_price)}${p.sale_date ? " · " + p.sale_date : ""}`
@@ -394,10 +466,11 @@ function paint(hits, parcels, chosen, land) {
   const parts = [];
   let i = 0;
   const addressQ = qLooksLikeParcel($q.value) && /\d/.test($q.value);
-  if (chosen) {
-    parts.push(rise(parcelDossier(chosen), i++));
-  } else if (parcels && parcels.features && parcels.features.length === 1 && addressQ) {
-    parts.push(rise(parcelDossier(parcels.features[0]), i++));
+  const lock = chosen
+    || (addressQ && parcels && parcels.features && parcels.features.length === 1 && parcels.features[0])
+    || null;
+  if (lock) {
+    parts.push(rise(parcelDossier(lock), i++));
   } else if (!addressQ) {
     hits.forEach((h) => {
       if (h.kind === "city") parts.push(cityBlock(h.city, i++));
@@ -501,6 +574,13 @@ function paint(hits, parcels, chosen, land) {
     parts.push(rise(`<p class="muted">Nothing in the index.</p>`, 0));
   }
   $out.innerHTML = parts.join("");
+  if (lock) {
+    fillWings(lock, land);
+    startHone(lock);
+  } else {
+    clearWings();
+    stopHone();
+  }
 }
 
 function qLooksLikeParcel(q) {
