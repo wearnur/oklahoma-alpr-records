@@ -73,7 +73,14 @@ _CITY_TAILS = (
     "FOREST PARK",
     "LAKE ALUMA",
     "SMITH VILLAGE",
+    "UNINCORPORATED",
 )
+
+SITED_SQL = (
+    "location IS NOT NULL AND UPPER(location) NOT LIKE '0 UNKNOWN%' "
+    "AND UPPER(location) <> 'UNKNOWN'"
+)
+_UNSITED_RE = re.compile(r"^0+\s*UNKNOWN\b")
 
 
 def sanitize(q: str) -> str:
@@ -132,11 +139,27 @@ def _strip_city_tail(s: str) -> str:
     return out
 
 
-def display_situs(location: str | None, city: str | None) -> str:
+def unpublished_situs(location: str | None, city: str | None = None) -> bool:
+    """Assessor placeholder lots: '0 UNKNOWN', plus city/unincorporated tails."""
     s = (location or "").strip()
     if not s:
-        return ""
-    if re.match(r"^0+\s*UNKNOWN$", s.upper()) or s.upper() in {"UNKNOWN", "N/A", "NONE", "NULL"}:
+        return True
+    city = (city or "").strip()
+    if city:
+        tail = " " + city.upper()
+        up = s.upper()
+        while up.endswith(tail):
+            s = s[: -len(city) - 1].rstrip(" ,")
+            up = s.upper()
+    s = _strip_city_tail(s.upper()).strip()
+    if not s or s in {"UNKNOWN", "N/A", "NONE", "NULL"}:
+        return True
+    return bool(_UNSITED_RE.match(s))
+
+
+def display_situs(location: str | None, city: str | None) -> str:
+    s = (location or "").strip()
+    if unpublished_situs(s, city):
         return ""
     city = (city or "").strip()
     if city:
@@ -145,7 +168,8 @@ def display_situs(location: str | None, city: str | None) -> str:
         while up.endswith(tail):
             s = s[: -len(city) - 1].rstrip(" ,")
             up = s.upper()
-    return _strip_city_tail(s.upper()).title() if s.isupper() or s.upper() == s else s
+    cleaned = _strip_city_tail(s.upper())
+    return cleaned.title() if s.isupper() or s.upper() == s else s
 
 
 def normalize_tokens(q: str) -> str:
@@ -284,7 +308,9 @@ def _score(row: dict, needle: str) -> tuple:
     norm = normalize_tokens(needle)
     exact = situs.startswith(norm) or situs.startswith(sanitize(needle))
     prefix = any(situs.startswith(v) for v in variants(needle))
+    unpublished = 0 if (row.get("situs_display") or "") else 1
     return (
+        unpublished,
         0 if exact else 1 if prefix else 2,
         0 if norm and norm in situs else 1 if norm in mail else 2,
         situs,
@@ -379,6 +405,23 @@ def lookup(q: str, limit: int = 8, account: str | None = None) -> dict:
     }
 
 
+def _arcgis(where: str, *, limit: int = 40, geometry: bool = False, count_only: bool = False, order: str | None = None) -> dict:
+    params = {"where": where, "f": "json"}
+    if count_only:
+        params["returnCountOnly"] = "true"
+    else:
+        params["outFields"] = FIELDS
+        params["returnGeometry"] = "true" if geometry else "false"
+        params["outSR"] = "4326"
+        params["resultRecordCount"] = str(min(limit, 40))
+        if order:
+            params["orderByFields"] = order
+    qs = urllib.parse.urlencode(params)
+    req = urllib.request.Request(LAYER + "?" + qs, headers={"User-Agent": UA})
+    raw = urllib.request.urlopen(req, timeout=20).read()
+    return json.loads(raw.decode())
+
+
 def lookup_by(field: str, value: str, limit: int = 40) -> dict:
     """Exact assessor roll: same owner string or same plat name. Not a person dossier."""
     key = {"owner": "name1", "subdivision": "subname"}.get(field)
@@ -388,29 +431,31 @@ def lookup_by(field: str, value: str, limit: int = 40) -> dict:
     if field == "subdivision" and not is_named_subdivision(needle):
         return {"ok": True, "query": needle, "features": [], "note": "unplatted tract, not a named subdivision"}
     like = needle.replace("'", "")
-    where = f"UPPER({key})='{like}'"
-    qs = urllib.parse.urlencode(
-        {
-            "where": where,
-            "outFields": FIELDS,
-            "returnGeometry": "true",
-            "outSR": "4326",
-            "resultRecordCount": str(min(limit, 40)),
-            "f": "json",
-        }
-    )
-    req = urllib.request.Request(LAYER + "?" + qs, headers={"User-Agent": UA})
-    raw = urllib.request.urlopen(req, timeout=20).read()
-    payload = json.loads(raw.decode())
+    where_all = f"UPPER({key})='{like}'"
+    where = f"{where_all} AND {SITED_SQL}"
+    payload = _arcgis(where, limit=limit, geometry=True, order="location")
     if payload.get("error"):
         return {"ok": False, "error": payload["error"], "features": []}
     rows = [_row(feat) for feat in payload.get("features") or []]
-    rows.sort(key=lambda r: sanitize(r.get("situs") or r.get("account") or ""))
+    rows = [r for r in rows if r.get("situs_display")]
+    seen = set()
+    uniq = []
+    for r in rows:
+        acct = r.get("account") or r.get("situs_display")
+        if acct in seen:
+            continue
+        seen.add(acct)
+        uniq.append(r)
+    rows = uniq
+    rows.sort(key=lambda r: sanitize(r.get("situs_display") or r.get("account") or ""))
+    counted = _arcgis(where, count_only=True)
+    sited = counted.get("count") if isinstance(counted.get("count"), int) else len(rows)
     return {
         "ok": True,
         "query": needle,
         "field": field,
         "county": "Oklahoma County",
         "features": rows[:limit],
-        "note": "Oklahoma County tax roll. Same name string, not beneficial ownership.",
+        "sited": sited,
+        "note": "Oklahoma County tax roll. Same name string, not beneficial ownership. Unpublished situs omitted.",
     }

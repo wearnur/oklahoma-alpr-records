@@ -112,6 +112,10 @@ function row(label, value) {
   return `<dt>${label}</dt><dd>${esc(value)}</dd>`;
 }
 
+function situsLabel(p) {
+  return (p && (p.situs_display || p.account)) || "No published situs";
+}
+
 function isEntity(name) {
   if (globalThis.OKParcels && typeof OKParcels.isEntity === "function") return OKParcels.isEntity(name);
   return /\b(LLC|L\.L\.C\.?|INC\.?|INCORPORATED|CORP\.?|CORPORATION|LTD\.?|LLP|PLLC|COMPANY)\b/i.test(name || "");
@@ -305,7 +309,7 @@ function parcelDossier(p) {
     : esc(p.situs_city || "");
   return `<article class="parcel">
     <p class="kicker">Oklahoma County parcel</p>
-    <h2>${esc(p.situs_display || p.situs || p.account)}</h2>
+    <h2>${esc(situsLabel(p))}</h2>
     <p class="muted">${cityLine}</p>
     <dl>
       ${row("Account", p.account)}
@@ -345,7 +349,7 @@ function paintSuggest(rows) {
     .map((p, i) => {
       const sold = p.sale_price ? money(p.sale_price) : "";
       return `<li role="option" data-account="${p.account || ""}" class="${i === suggestI ? "on" : ""}">
-        ${esc(p.situs_display || p.situs || p.account)}
+        ${esc(situsLabel(p))}
         <span class="muted">${esc(p.situs_city || "")} ${sold ? "· last sale " + sold : ""}</span>
       </li>`;
     })
@@ -480,7 +484,7 @@ function paint(hits, parcels, chosen, land) {
       const sold = p.sale_price ? ` · last recorded sale ${money(p.sale_price)}` : "";
       parts.push(rise(
         `<article class="hit" data-pick="${p.account || ""}">
-          <p>${esc(p.situs_display || p.situs || p.account)}</p>
+          <p>${esc(situsLabel(p))}</p>
           <p class="muted">${esc(p.situs_city || p.mail_city || "")} · market ${money(p.market) || "—"}</p>
           <p>assessed ${money(p.assessed) || "—"} · land ${money(p.land) || "—"}${sold}</p>
         </article>`,
@@ -699,8 +703,13 @@ Promise.all([
   setInterval(renderAmbient, 4200);
   const boot = new URLSearchParams(location.search);
   if (boot.get("frame") === "1") document.body.classList.add("is-framed");
+  const bootRoll = boot.get("roll");
+  const bootName = boot.get("name");
   const bootQ = boot.get("q");
-  if (bootQ) {
+  if (bootRoll && bootName) {
+    $q.value = bootName;
+    openRoll(bootRoll, bootName);
+  } else if (bootQ) {
     $q.value = bootQ;
     run();
   }
@@ -754,17 +763,20 @@ async function openRoll(kind, value) {
     }
     const payload = await OKParcels.lookupBy(kind, value, { limit: 40 });
     const feats = payload.features || [];
+    const sited = payload.sited != null ? payload.sited : feats.length;
+    const cap = feats.length >= 40 || sited > feats.length;
     const parts = [
-      rise(`<p class="kicker">Tax roll · ${esc(kind)} · ${feats.length}${feats.length === 40 ? "+" : ""}</p>`, 0),
-      rise(`<p class="muted">${esc(value)} — same assessor string, not beneficial ownership. Cap 40.</p>`, 1),
+      rise(`<p class="kicker">Tax roll · ${esc(kind)} · ${feats.length}${cap ? "+" : ""}</p>`, 0),
+      rise(`<p class="muted">${esc(value)} — same assessor string, not beneficial ownership. Unpublished situs omitted.${sited > feats.length ? " " + sited + " with a published address." : ""} Cap 40.</p>`, 1),
     ];
     if (payload.note && !feats.length) {
       parts.push(rise(`<p class="muted">${esc(payload.note)}</p>`, 2));
     }
     feats.forEach((p, i) => {
+      const label = p.situs_display || p.account || "No published situs";
       parts.push(rise(
         `<article class="hit" data-pick="${p.account || ""}">
-          <p>${esc(p.situs_display || p.situs || p.account)}</p>
+          <p>${esc(label)}</p>
           <p class="muted">${esc(p.owner || "")} · market ${money(p.market) || "—"}</p>
         </article>`,
         i + 2

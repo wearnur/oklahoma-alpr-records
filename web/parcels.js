@@ -25,8 +25,11 @@
     "OKLAHOMA CITY", "OKC", "EDMOND", "NICHOLS HILLS", "THE VILLAGE", "BETHANY",
     "WARR ACRES", "MIDWEST CITY", "DEL CITY", "YUKON", "MOORE", "CHOCTAW",
     "HARRAH", "LUTHER", "JONES", "SPENCER", "FOREST PARK", "LAKE ALUMA",
-    "SMITH VILLAGE",
+    "SMITH VILLAGE", "UNINCORPORATED",
   ];
+  const SITED_SQL =
+    "location IS NOT NULL AND UPPER(location) NOT LIKE '0 UNKNOWN%' " +
+    "AND UPPER(location) <> 'UNKNOWN'";
 
   function sanitize(q) {
     return String(q || "")
@@ -79,10 +82,9 @@
     return s.toLowerCase().replace(/\b[a-z]/g, (c) => c.toUpperCase());
   }
 
-  function displaySitus(location, city) {
+  function unpublishedSitus(location, city) {
     let s = String(location || "").trim();
-    if (!s) return "";
-    if (/^0+\s*UNKNOWN$/i.test(s) || /^(UNKNOWN|N\/A|NONE|NULL)$/i.test(s)) return "";
+    if (!s) return true;
     const cityU = String(city || "").trim().toUpperCase();
     if (cityU) {
       const tail = " " + cityU;
@@ -92,8 +94,24 @@
         up = s.toUpperCase();
       }
     }
-    s = stripCityTail(s.toUpperCase());
-    return titleCase(s);
+    s = stripCityTail(s.toUpperCase()).trim();
+    if (!s || /^(UNKNOWN|N\/A|NONE|NULL)$/.test(s)) return true;
+    return /^0+\s*UNKNOWN\b/.test(s);
+  }
+
+  function displaySitus(location, city) {
+    let s = String(location || "").trim();
+    if (unpublishedSitus(s, city)) return "";
+    const cityU = String(city || "").trim().toUpperCase();
+    if (cityU) {
+      const tail = " " + cityU;
+      let up = s.toUpperCase();
+      while (up.endsWith(tail)) {
+        s = s.slice(0, -(cityU.length + 1)).replace(/[ ,]+$/, "");
+        up = s.toUpperCase();
+      }
+    }
+    return titleCase(stripCityTail(s.toUpperCase()));
   }
 
   function normalizeTokens(q) {
@@ -224,7 +242,13 @@
     const norm = normalizeTokens(needle);
     const exact = situs.startsWith(norm) || situs.startsWith(sanitize(needle));
     const prefix = variants(needle).some((v) => situs.startsWith(v));
-    return [exact ? 0 : prefix ? 1 : 2, norm && situs.indexOf(norm) >= 0 ? 0 : mail.indexOf(norm) >= 0 ? 1 : 2, situs];
+    const unpublished = row.situs_display ? 0 : 1;
+    return [
+      unpublished,
+      exact ? 0 : prefix ? 1 : 2,
+      norm && situs.indexOf(norm) >= 0 ? 0 : mail.indexOf(norm) >= 0 ? 1 : 2,
+      situs,
+    ];
   }
 
   function rowFromFeature(feat) {
@@ -325,9 +349,10 @@
     rows.sort((a, b) => {
       const sa = score(a, needle);
       const sb = score(b, needle);
-      if (sa[0] !== sb[0]) return sa[0] - sb[0];
-      if (sa[1] !== sb[1]) return sa[1] - sb[1];
-      return String(sa[2]).localeCompare(String(sb[2]));
+      for (let i = 0; i < 3; i += 1) {
+        if (sa[i] !== sb[i]) return sa[i] - sb[i];
+      }
+      return String(sa[3]).localeCompare(String(sb[3]));
     });
     if (opts.account) {
       let acct = sanitize(opts.account).replace(/ /g, "");
@@ -355,17 +380,37 @@
     if (field === "subdivision" && !isNamedSubdivision(needle)) {
       return { ok: true, query: needle, features: [], note: "unplatted tract, not a named subdivision" };
     }
-    const params = new URLSearchParams({
-      where: "UPPER(" + key + ")='" + needle.replace(/'/g, "") + "'",
+    const like = needle.replace(/'/g, "");
+    const where = "UPPER(" + key + ")='" + like + "' AND " + SITED_SQL;
+    const listParams = new URLSearchParams({
+      where,
       outFields: FIELDS,
       returnGeometry: "false",
+      orderByFields: "location",
       resultRecordCount: String(opts.limit || 40),
       f: "json",
     });
-    const res = await fetch(LAYER + "?" + params.toString());
+    const countParams = new URLSearchParams({
+      where,
+      returnCountOnly: "true",
+      f: "json",
+    });
+    const [res, countRes] = await Promise.all([
+      fetch(LAYER + "?" + listParams.toString()),
+      fetch(LAYER + "?" + countParams.toString()),
+    ]);
     const payload = await res.json();
+    const counted = await countRes.json();
     if (payload.error) return { ok: false, error: payload.error, features: [] };
-    const rows = (payload.features || []).map(rowFromFeature);
+    const seen = {};
+    const rows = [];
+    (payload.features || []).map(rowFromFeature).forEach((r) => {
+      if (!r.situs_display) return;
+      const acct = r.account || r.situs_display;
+      if (seen[acct]) return;
+      seen[acct] = true;
+      rows.push(r);
+    });
     rows.sort((a, b) => String(a.situs_display || a.account || "").localeCompare(String(b.situs_display || b.account || "")));
     return {
       ok: true,
@@ -373,7 +418,8 @@
       field,
       county: "Oklahoma County",
       features: rows,
-      note: "Oklahoma County tax roll. Same name string, not beneficial ownership.",
+      sited: typeof counted.count === "number" ? counted.count : rows.length,
+      note: "Oklahoma County tax roll. Same name string, not beneficial ownership. Unpublished situs omitted.",
     };
   }
 
@@ -386,6 +432,7 @@
     variants,
     normalizeTokens,
     displaySitus,
+    unpublishedSitus,
     nearbyCameras,
   };
 })(window);

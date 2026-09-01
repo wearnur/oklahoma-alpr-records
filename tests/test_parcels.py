@@ -1,4 +1,5 @@
 from collectors.parcels import (
+    SITED_SQL,
     centroid,
     display_situs,
     haversine_m,
@@ -9,6 +10,7 @@ from collectors.parcels import (
     normalize_tokens,
     parse_sale_date,
     sanitize,
+    unpublished_situs,
     variants,
     _where,
     looks_like_address,
@@ -82,6 +84,16 @@ def test_looks_like_address():
 def test_display_situs_drops_unknown_placeholder():
     assert display_situs("0 UNKNOWN", "EDMOND") == ""
     assert display_situs("0 Unknown", None) == ""
+    assert display_situs("0 UNKNOWN  UNINCORPORATED", "UNINCORPORATED") == ""
+    assert display_situs("0 UNKNOWN OKLAHOMA CITY", "OKLAHOMA CITY") == ""
+    assert unpublished_situs("0 UNKNOWN  UNINCORPORATED", "UNINCORPORATED")
+    assert not unpublished_situs("2000 REMINGTON PL OKLAHOMA CITY", "OKLAHOMA CITY")
+    assert display_situs("2000 REMINGTON PL OKLAHOMA CITY", "OKLAHOMA CITY") == "2000 Remington Pl"
+
+
+def test_sited_sql_drops_placeholder_lots():
+    assert "0 UNKNOWN" in SITED_SQL
+    assert "location IS NOT NULL" in SITED_SQL
 
 
 def test_entity_and_subdivision_gates():
