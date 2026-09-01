@@ -697,6 +697,13 @@ Promise.all([
   okcRows = (rows && rows.rows) || [];
   renderAmbient();
   setInterval(renderAmbient, 4200);
+  const boot = new URLSearchParams(location.search);
+  if (boot.get("frame") === "1") document.body.classList.add("is-framed");
+  const bootQ = boot.get("q");
+  if (bootQ) {
+    $q.value = bootQ;
+    run();
+  }
 });
 
 $q.addEventListener("input", () => {
