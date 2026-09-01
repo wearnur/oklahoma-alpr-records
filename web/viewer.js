@@ -5,12 +5,13 @@
   ov.innerHTML = `
     <div class="pdf-bar">
       <span class="kicker" id="pdf-title">Document</span>
-      <button type="button" class="btn" id="pdf-close">Close</button>
+      <button type="button" id="pdf-close">Close</button>
     </div>
     <iframe title="Document"></iframe>
   `;
   document.body.appendChild(ov);
   const frame = ov.querySelector("iframe");
+  const closeBtn = document.getElementById("pdf-close");
 
   function closePdf() {
     ov.hidden = true;
@@ -23,18 +24,28 @@
     document.body.classList.add("pdf-open");
     document.getElementById("pdf-title").textContent = title || "Document";
     frame.src = url;
+    // Chrome's PDF plugin swallows keys once clicked. Keep Close focused
+    // until then so Esc works; Close always works with the mouse.
+    requestAnimationFrame(() => closeBtn.focus());
   }
 
-  document.getElementById("pdf-close").onclick = closePdf;
-  ov.addEventListener("click", (e) => {
-    if (e.target === ov) closePdf();
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !ov.hidden) {
+  function onEsc(e) {
+    if (ov.hidden) return;
+    if (e.key === "Escape" || e.key === "Esc" || e.keyCode === 27) {
       e.preventDefault();
+      e.stopPropagation();
       closePdf();
     }
+  }
+
+  closeBtn.onclick = closePdf;
+  ov.addEventListener("click", (e) => {
+    if (e.target === ov || e.target === ov.querySelector(".pdf-bar")) closePdf();
   });
+  window.addEventListener("keydown", onEsc, true);
+  document.addEventListener("keydown", onEsc, true);
+  closeBtn.addEventListener("keydown", onEsc);
+
   document.addEventListener("click", (e) => {
     const a = e.target.closest("a");
     if (!a) return;

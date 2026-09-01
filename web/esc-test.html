@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>esc-test</title>
+<script src="viewer.js"></script>
+<script>
+  window.addEventListener("load", () => {
+    openPdf("about:blank", "test");
+    const ev = new KeyboardEvent("keydown", { key: "Escape", keyCode: 27, bubbles: true, cancelable: true });
+    window.dispatchEvent(ev);
+    const hidden = document.getElementById("pdf-overlay").hidden;
+    document.title = hidden ? "ESC-PASS" : "ESC-FAIL";
+    document.body.textContent = document.title;
+  });
+</script>

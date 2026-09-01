@@ -58,23 +58,17 @@
         const portal = req && req.portal
           ? `<a href="${req.portal}" target="_blank" rel="noopener">Portal</a>`
           : "";
-        const copy = req
-          ? `<button class="btn" type="button" data-copy="${m.city}">Copy request</button>`
+        const mail = req && req.mailto
+          ? `<a href="${req.mailto}">Email request</a>`
           : "";
         return `<tr>
           <td><a href="map.html?city=${encodeURIComponent(m.city)}">${m.city}</a></td>
           <td class="num">${m.cameras}</td>
           <td class="num">${money(m.amount_usd)}</td>
           <td>${m.status || "—"}</td>
-          <td>${portal} ${copy}</td>
+          <td>${mail} ${portal}</td>
         </tr>`;
       }).join("");
-      body.querySelectorAll("[data-copy]").forEach((b) => {
-        b.onclick = () => {
-          const req = requests.find((r) => r.city === b.dataset.copy);
-          if (req) navigator.clipboard.writeText(req.subject + "\n\n" + req.body);
-        };
-      });
     });
   </script>
 </body>

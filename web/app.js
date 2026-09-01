@@ -74,8 +74,8 @@ function openDossier(f, marker) {
   const requestBlock = req
     ? `<div class="req">
         <p>Reply to <code>${req.inbox}</code>. We do not auto-file the portal.</p>
+        ${req.mailto ? `<a class="btn" href="${req.mailto}">Email request</a>` : ""}
         ${req.portal ? `<a class="btn" href="${req.portal}" target="_blank" rel="noopener">Portal</a>` : ""}
-        <button type="button" class="btn" id="copy-req">Copy request</button>
        </div>`
     : "";
   const share = cityTerms && cityTerms.sharing_and_license
@@ -110,10 +110,6 @@ function openDossier(f, marker) {
     ${share ? `<p class="clause">${String(share).slice(0, 420)}</p>` : ""}
     ${requestBlock}
   `;
-  const copy = document.getElementById("copy-req");
-  if (copy && req) {
-    copy.onclick = () => navigator.clipboard.writeText(req.subject + "\n\n" + req.body);
-  }
 }
 
 async function boot() {

@@ -44,7 +44,7 @@ Status: `live` · `next` · `link` · `metered` · `no`
 
 | ID | Class | Notes |
 |---|---|---|
-| zillow | Zillow Zestimate / sold comps | Scrape is ToS. Use assessor recorded sale. Paid API only with Warner’s word. |
+| zillow | Zillow Zestimate / sold comps | Sold comps originate in county recorder/assessor filings and MLS (brokers opt in). Zestimate is a model. We use Oklahoma County `SalePrice`. MLS via Warner’s license is the other legitimate path — not a scrape. |
 | google-places | Business reviews, hours | Metered. |
 | yelp | Reviews | Metered / ToS. |
 | pacer | Federal court | PACER fees. |

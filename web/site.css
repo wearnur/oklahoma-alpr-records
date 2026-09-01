@@ -311,4 +311,38 @@ td.num { font-variant-numeric: tabular-nums; }
   border: 0;
   background: #fff;
 }
+#pdf-close {
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  padding: 0.4rem 0.85rem;
+  cursor: pointer;
+  font-family: "IBM Plex Sans Condensed", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+#pdf-close:focus {
+  outline: 1px solid var(--mark);
+  outline-offset: 2px;
+}
 body.pdf-open { overflow: hidden; }
+
+.commands {
+  position: fixed;
+  left: 1.25rem;
+  bottom: 1.25rem;
+  max-width: 16rem;
+  font-size: 12px;
+  color: var(--mute);
+}
+.commands summary {
+  cursor: pointer;
+  font-family: "IBM Plex Sans Condensed", sans-serif;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 10px;
+  list-style: none;
+}
+.commands ul { margin: 0.5rem 0 0; padding: 0; list-style: none; }
+.commands li { margin: 0.25rem 0; }

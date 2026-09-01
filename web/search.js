@@ -34,8 +34,8 @@ function cityBlock(c, i) {
   const req = requests.find((r) => r.city === c.city);
   const actions = [
     `<a href="map.html?city=${encodeURIComponent(c.city)}">Index</a>`,
+    req && req.mailto ? `<a href="${req.mailto}">Email request</a>` : "",
     req && req.portal ? `<a href="${req.portal}" target="_blank" rel="noopener">Portal</a>` : "",
-    req ? `<button type="button" class="btn" data-copy="${c.city}">Copy request</button>` : "",
   ].filter(Boolean).join(" · ");
   return rise(
     `<article class="hit">
@@ -157,12 +157,6 @@ function paint(hits, parcels) {
     parts.push(rise(`<p class="muted">Nothing in the index.</p>`, 0));
   }
   $out.innerHTML = parts.join("");
-  $out.querySelectorAll("[data-copy]").forEach((b) => {
-    b.onclick = () => {
-      const req = requests.find((r) => r.city === b.dataset.copy);
-      if (req) navigator.clipboard.writeText(req.subject + "\n\n" + req.body);
-    };
-  });
 }
 
 function qLooksLikeParcel(q) {
@@ -251,3 +245,20 @@ $q.addEventListener("input", () => {
 $q.addEventListener("keydown", (e) => {
   if (e.key === "Enter") run();
 });
+
+const HINTS = [
+  "Tulsa",
+  "C241032",
+  "508 S Main",
+  "missing",
+  "catalog",
+  "Oklahoma City",
+];
+let hintI = 0;
+function cycleHint() {
+  if (document.activeElement === $q && $q.value) return;
+  $q.placeholder = HINTS[hintI % HINTS.length];
+  hintI += 1;
+}
+cycleHint();
+setInterval(cycleHint, 3200);
