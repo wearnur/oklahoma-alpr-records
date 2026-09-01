@@ -383,7 +383,6 @@ function parcelDossier(p) {
     : esc(p.situs_city || "");
   return `<article class="parcel">
     <p class="kicker">Oklahoma County parcel</p>
-    <h2>${esc(situsLabel(p))}</h2>
     <p class="muted">${cityLine}</p>
     <dl>
       ${row("Account", p.account)}

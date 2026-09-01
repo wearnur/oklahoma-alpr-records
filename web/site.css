@@ -219,8 +219,8 @@ nav a.on, nav a:hover { color: var(--ink); }
   pointer-events: none;
 }
 .wings[hidden] { display: none; }
-.wings.west { left: 1rem; }
-.wings.east { right: 1rem; text-align: right; }
+.wings.west { left: 2.75rem; }
+.wings.east { right: 2.75rem; text-align: right; }
 .wing {
   margin: 0 0 0.7rem;
   font-size: 11px;
@@ -244,19 +244,12 @@ nav a.on, nav a:hover { color: var(--ink); }
   to { opacity: 0.72; transform: none; }
 }
 body.is-honing .parcel { opacity: 0.28; }
-body.is-honing .parcel h2 { opacity: 0; }
 body.is-honing-done .parcel { opacity: 1; transition: opacity 0.28s ease; }
 @media (max-width: 1180px) {
   .wings { display: none; }
 }
 
 .parcel { padding-top: 0.4rem; }
-.parcel h2 {
-  font-weight: 300;
-  font-size: 1.35rem;
-  letter-spacing: -0.03em;
-  margin: 0 0 0.35rem;
-}
 .parcel .nearby { margin: 0.9rem 0 0; padding: 0; list-style: none; }
 .parcel .nearby li { margin: 0.35rem 0; font-size: 13px; font-weight: 300; }
 button.linkish {
