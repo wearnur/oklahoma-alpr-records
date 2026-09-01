@@ -67,9 +67,8 @@ function openDossier(f, marker) {
     (r) => p.city && String(r.city || "").toLowerCase() === String(p.city).toLowerCase()
   );
   const pdfs = cityDocs
-    .map((d) => `<li><a href="${localPdf(d.url)}" target="pdfpane">${d.name}</a></li>`)
+    .map((d) => `<li><a href="${localPdf(d.url)}" data-pdf>${d.name}</a></li>`)
     .join("");
-  const firstPdf = cityDocs[0] ? localPdf(cityDocs[0].url) : "";
   const ret = pkt && pkt.retention ? String(pkt.retention).split(";")[0] : "unknown";
   const hole = !pkt || !pkt.has_contract_pdf;
   const requestBlock = req
@@ -107,7 +106,7 @@ function openDossier(f, marker) {
     </p>
     <iframe class="svframe" title="Street View" src="${sv}"></iframe>
     ${pdfs ? `<p class="kicker">Packet</p><ul class="docs">${pdfs}</ul>
-      <iframe class="pdf-frame" name="pdfpane" src="${firstPdf}" title="contract PDF"></iframe>` : "<p class='hole'>No contract PDF.</p>"}
+      <p class="muted">Open a document. Close or Esc to return.</p>` : "<p class='hole'>No contract PDF.</p>"}
     ${share ? `<p class="clause">${String(share).slice(0, 420)}</p>` : ""}
     ${requestBlock}
   `;

@@ -288,3 +288,27 @@ td.num { font-variant-numeric: tabular-nums; }
   .counts { grid-template-columns: 1fr 1fr; }
   nav { flex-wrap: wrap; }
 }
+
+#pdf-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--paper);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+}
+#pdf-overlay[hidden] { display: none; }
+.pdf-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 1.2rem;
+  border-bottom: 1px solid var(--line);
+}
+#pdf-overlay iframe {
+  flex: 1;
+  width: 100%;
+  border: 0;
+  background: #fff;
+}
+body.pdf-open { overflow: hidden; }

@@ -28,6 +28,7 @@
     <p class="kicker" style="margin-top:2.5rem">Documents</p>
     <ul class="docs" id="docs"></ul>
   </main>
+  <script src="viewer.js"></script>
   <script>
     function money(n) {
       if (n == null || n === "") return "—";
@@ -53,7 +54,7 @@
         </article>`;
       }).join("") || "<p class='muted'>None.</p>";
       document.getElementById("docs").innerHTML = docs.map((d) =>
-        `<li><a href="${localPdf(d.url)}">${d.city || ""} — ${d.name}</a></li>`
+        `<li><a href="${localPdf(d.url)}" data-pdf>${d.city || ""} — ${d.name}</a></li>`
       ).join("");
     });
   </script>

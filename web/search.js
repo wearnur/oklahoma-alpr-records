@@ -6,6 +6,7 @@ let cities = [];
 let terms = [];
 let documents = [];
 let requests = [];
+let catalog = [];
 let status = {};
 let tick = 0;
 let timer;
@@ -79,7 +80,13 @@ function searchLocal(q) {
   if (["missing", "hole", "holes", "absent"].includes(needle)) {
     cities.filter((c) => !c.has_contract_pdf).slice(0, 8).forEach((c) => hits.push({ kind: "city", city: c }));
   }
-  return hits.slice(0, 12);
+  catalog.forEach((row) => {
+    const blob = `${row.id} ${row.class} ${(row.query || []).join(" ")} ${row.status}`.toLowerCase();
+    if (blob.includes(needle) || needle === "catalog" || needle === "what can i search") {
+      hits.push({ kind: "catalog", row });
+    }
+  });
+  return hits.slice(0, 14);
 }
 
 function paint(hits, parcels) {
@@ -105,7 +112,26 @@ function paint(hits, parcels) {
       parts.push(rise(
         `<article class="hit">
           <p class="kicker">Document</p>
-          <p><a href="${localPdf(d.url)}">${d.city || ""} — ${d.name}</a></p>
+          <p><a href="${localPdf(d.url)}" data-pdf>${d.city || ""} — ${d.name}</a></p>
+        </article>`,
+        i++
+      ));
+    }
+    if (h.kind === "catalog") {
+      const r = h.row;
+      parts.push(rise(
+        `<article class="hit">
+          <p class="kicker">${r.status}</p>
+          <p>${r.class}${r.url ? ` · <a href="${r.url}" target="_blank" rel="noopener">source</a>` : ""}</p>
+        </article>`,
+        i++
+      ));
+    }
+    if (h.kind === "link") {
+      parts.push(rise(
+        `<article class="hit">
+          <p class="kicker">${h.label}</p>
+          <p><a href="${h.url}" target="_blank" rel="noopener">${h.text}</a></p>
         </article>`,
         i++
       ));
@@ -114,17 +140,18 @@ function paint(hits, parcels) {
   if (parcels && parcels.features && parcels.features.length) {
     parts.push(rise(`<p class="kicker">Oklahoma County assessor</p>`, i++));
     parcels.features.forEach((p) => {
+      const sold = p.sale_price ? ` · last recorded sale ${money(p.sale_price)}` : "";
       parts.push(rise(
         `<article class="hit">
           <p>${p.situs || p.mail || p.account}</p>
           <p class="muted">${p.situs_city || p.mail_city || ""} · ${p.owner || ""}</p>
-          <p>market ${money(p.market) || "—"} · assessed ${money(p.assessed) || "—"} · land ${money(p.land) || "—"}</p>
+          <p>market ${money(p.market) || "—"} · assessed ${money(p.assessed) || "—"} · land ${money(p.land) || "—"}${sold}</p>
         </article>`,
         i++
       ));
     });
-  } else if (parcels && parcels.ok && /\d/.test($q.value) && $q.value.trim().length >= 5 && !(parcels.features || []).length) {
-    parts.push(rise(`<p class="muted">No Oklahoma County parcel for that string. Leases are not public.</p>`, i++));
+  } else if (parcels && parcels.ok && parcels.note && qLooksLikeParcel($q.value) && !(parcels.features || []).length) {
+    parts.push(rise(`<p class="muted">No Oklahoma County parcel. Recorded sales come from the assessor, not Zillow. Leases are not public.</p>`, i++));
   }
   if (!parts.length) {
     parts.push(rise(`<p class="muted">Nothing in the index.</p>`, 0));
@@ -138,6 +165,45 @@ function paint(hits, parcels) {
   });
 }
 
+function qLooksLikeParcel(q) {
+  const s = q.trim();
+  if (s.length < 3) return false;
+  if (/^(missing|holes?|absent|flock|alpr|catalog|what can i search)$/i.test(s)) return false;
+  if (cities.some((c) => c.city.toLowerCase() === s.toLowerCase())) return false;
+  return true;
+}
+
+function extraLinks(q) {
+  const n = q.trim();
+  const enc = encodeURIComponent(n);
+  const links = [];
+  if (/\b(llc|inc|corp|company|business|sos)\b/i.test(n)) {
+    links.push({
+      kind: "link",
+      label: "Oklahoma SOS",
+      text: "Search business filings",
+      url: "https://www.sos.ok.gov/corp/corpInquiryFind.aspx",
+    });
+  }
+  if (/\b(court|docket|felony|case|filing|lawsuit)\b/i.test(n) || (/^[a-z][a-z.'\-]+(?:\s+[a-z][a-z.'\-]+)+$/i.test(n) && !/\d/.test(n))) {
+    links.push({
+      kind: "link",
+      label: "OSCN",
+      text: "Search Oklahoma state courts",
+      url: "https://www.oscn.net/dockets/Search.aspx",
+    });
+  }
+  if (/\b(sex offender|predator|sors|offender registry)\b/i.test(n)) {
+    links.push({
+      kind: "link",
+      label: "SORS",
+      text: "Oklahoma Sex Offender Registry (official)",
+      url: "https://sors.doc.ok.gov/svor/html/SOR.html",
+    });
+  }
+  return links;
+}
+
 async function run() {
   const q = $q.value.trim();
   if (!q) {
@@ -147,9 +213,9 @@ async function run() {
   }
   $ambient.hidden = true;
   $ambient.textContent = "";
-  const hits = searchLocal(q);
+  const hits = searchLocal(q).concat(extraLinks(q));
   let parcels = null;
-  if (/\d/.test(q) && q.length >= 5) {
+  if (qLooksLikeParcel(q)) {
     try {
       parcels = await fetch("/v1/parcel?q=" + encodeURIComponent(q)).then((r) => r.json());
     } catch (e) {
@@ -166,12 +232,14 @@ Promise.all([
   fetch("data/documents.json").then((r) => r.json()),
   fetch("data/requests.json").then((r) => r.json()).catch(() => []),
   fetch("data/status.json").then((r) => r.json()),
-]).then(([c, t, d, r, s]) => {
+  fetch("data/catalog.json").then((r) => r.json()).catch(() => []),
+]).then(([c, t, d, r, s, cat]) => {
   cities = c.sort((a, b) => (b.cameras || 0) - (a.cameras || 0));
   terms = t;
   documents = d;
   requests = r;
   status = s;
+  catalog = cat;
   renderAmbient();
   setInterval(renderAmbient, 4200);
 });

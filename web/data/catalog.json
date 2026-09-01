@@ -1,0 +1,19 @@
+[
+  {"id": "alpr-osm", "class": "ALPR camera pins", "status": "live", "query": ["camera", "flock", "alpr", "surveillance"]},
+  {"id": "alpr-contracts", "class": "ALPR city contracts", "status": "live", "query": ["contract", "c241032", "flock"]},
+  {"id": "alpr-terms", "class": "Retention / dollars / sharing", "status": "live", "query": ["retention", "sharing"]},
+  {"id": "ok-county-parcel", "class": "Oklahoma County parcels (owner, market, recorded sale)", "status": "live", "query": ["parcel", "property", "assessor", "sold"]},
+  {"id": "alpr-density", "class": "Cameras per km²", "status": "live", "query": ["density", "surveillance"]},
+  {"id": "tulsa-parcel", "class": "Tulsa County parcels", "status": "next"},
+  {"id": "cleveland-parcel", "class": "Cleveland County parcels", "status": "next"},
+  {"id": "ok-sos-entity", "class": "Oklahoma SOS business entities", "status": "next"},
+  {"id": "oscn-docket", "class": "OSCN court dockets", "status": "next"},
+  {"id": "ok-county-clerk", "class": "Recorded deeds / mortgages", "status": "next"},
+  {"id": "oscn-search", "class": "OSCN name search", "status": "link", "url": "https://www.oscn.net/dockets/Search.aspx"},
+  {"id": "sos-search", "class": "SOS business search", "status": "link", "url": "https://www.sos.ok.gov/corp/corpInquiryFind.aspx"},
+  {"id": "sors", "class": "OK Sex Offender Registry (explicit lookup only)", "status": "link", "url": "https://sors.doc.ok.gov/svor/html/SOR.html"},
+  {"id": "zillow", "class": "Zillow estimates", "status": "metered", "note": "No scrape. Use assessor SalePrice."},
+  {"id": "google-places", "class": "Business reviews", "status": "metered"},
+  {"id": "residential-lease", "class": "Residential leases", "status": "no"},
+  {"id": "plates-footage", "class": "Plate reads / Flock video", "status": "no"}
+]
