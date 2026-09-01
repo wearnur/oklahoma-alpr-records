@@ -18,7 +18,8 @@
   </header>
   <main class="inquire">
     <label class="kicker" for="q">Inquire</label>
-    <input id="q" type="search" autocomplete="off" spellcheck="false" autofocus />
+    <input id="q" type="search" autocomplete="off" spellcheck="false" autofocus role="combobox" aria-autocomplete="list" aria-controls="suggest" aria-expanded="false" />
+    <ul id="suggest" hidden role="listbox"></ul>
     <p class="ambient" id="ambient"></p>
     <div id="out"></div>
   </main>
@@ -27,7 +28,7 @@
     <ul>
       <li><code>Tulsa</code> — city packet / density</li>
       <li><code>C241032</code> — contract</li>
-      <li><code>508 S Main</code> — Oklahoma County parcel / recorded sale</li>
+      <li><code>508 S Main</code> — Oklahoma County parcel / recorded sale / nearby cameras</li>
       <li><code>missing</code> — holes</li>
       <li><code>catalog</code> — what we index</li>
       <li><code>business llc</code> — SOS link</li>
@@ -35,6 +36,7 @@
     </ul>
   </details>
   <script src="viewer.js"></script>
+  <script src="parcels.js"></script>
   <script src="search.js"></script>
 </body>
 </html>

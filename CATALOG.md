@@ -11,7 +11,7 @@ Status: `live` · `next` · `link` · `metered` · `no`
 | alpr-osm | ALPR / Flock camera pins | OSM. No plates. |
 | alpr-contracts | City ALPR contracts and renewals | OKC + Broken Arrow PDFs. Holes queued. |
 | alpr-terms | Extracted retention, dollars, sharing | From those PDFs. |
-| ok-county-parcel | Oklahoma County parcels | Owner, situs, market, assessed, land, recorded sale if the assessor has it. |
+| ok-county-parcel | Oklahoma County parcels | Live assessor query. Autocomplete situs. Owner, market, assessed, land, recorded sale if published, nearby mapped cameras, city packet. |
 | alpr-density | Cameras / km² and share of index | Computed. |
 
 ## Next (public, $0, bounded)

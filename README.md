@@ -2,9 +2,12 @@
 
 A **union index** of Oklahoma automated license-plate reader deployments and the public record around them: camera pins, agency lists, contract PDFs, and extracted terms.
 
+- Live: https://wearnur.github.io/oklahoma-alpr-records/
+- Source: https://github.com/wearnur/oklahoma-alpr-records
+
 This is not a tracker. We do not store plates, footage, faces, or vehicle paths. The map is cameras and contracts, the same class of object already on OpenStreetMap and in city clerk files.
 
-Humans browse the map. Agents can `GET` the JSON. Same objects.
+Humans browse the map. Agents can `GET` the JSON. Same objects. GitHub Pages is static: inquire hits the Oklahoma County assessor layer in the browser (CORS, no key). `python serve.py` still exposes `/v1` for local agents.
 
 ## Use it
 
@@ -16,9 +19,9 @@ python serve.py
 
 Open http://127.0.0.1:8765/
 
-Pages: **home is search** (city, contract, document, Oklahoma County parcel value). Map is the spatial index. Missing / records are lists.
+Pages: **home is search** (city, contract, document, Oklahoma County address / recorded sale). Map is the spatial index. Missing / records are lists.
 
-`GET /v1/parcel?q=508+S+MAIN+ST` — Oklahoma County assessor (market/assessed/land/recorded sale). See `CATALOG.md` for what is live, next, link-out, metered, or no. We do not scrape Zillow or build a person dossier.
+`GET /v1/parcel?q=508+S+MAIN+ST` — Oklahoma County assessor live lookup (not a local dump). Home search autocompletes situs, then shows market / assessed / recorded sale if published, plus mapped cameras within a mile and the city packet. `?account=` pins one parcel. See `CATALOG.md`. We do not scrape Zillow or build a person dossier.
 
 Click a pin for the **dossier** (terms, PDF, Street View, copy-ready Open Records text). Missing packets are the default tab.
 

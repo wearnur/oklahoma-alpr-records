@@ -25,8 +25,12 @@ function money(n) {
 function localPdf(url) {
   if (!url) return "";
   const name = url.split("/").pop();
-  if (name && name.toLowerCase().endsWith(".pdf")) return "/docs/" + name;
-  return url;
+  if (!name || !name.toLowerCase().endsWith(".pdf")) return url;
+  if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
+    return "/docs/" + name;
+  }
+  if (/^https?:/i.test(url)) return url;
+  return "../data/docs/" + name;
 }
 
 function renderCameras(q) {
@@ -129,12 +133,24 @@ async function boot() {
     `${n(status.cameras)} assets · ${n(status.missing_packets)} holes`;
   const params = new URLSearchParams(location.search);
   const city = params.get("city") || "";
-  if (city) {
+  const lat = parseFloat(params.get("lat"));
+  const lng = parseFloat(params.get("lng"));
+  if (Number.isFinite(lat) && Number.isFinite(lng)) {
+    const z = Number(params.get("z") || 16);
+    map.setView([lat, lng], z);
+    L.circleMarker([lat, lng], {
+      radius: 8,
+      color: "#c4471a",
+      weight: 2,
+      fillColor: "#c4471a",
+      fillOpacity: 0.2,
+    }).addTo(map);
+  } else if (city) {
     document.getElementById("q").value = city;
     const hit = cameras.find((f) => (f.properties || {}).city === city);
     if (hit) {
-      const [lon, lat] = hit.geometry.coordinates;
-      map.setView([lat, lon], 12);
+      const [lon, lat0] = hit.geometry.coordinates;
+      map.setView([lat0, lon], 12);
     }
   }
   renderCameras(city);

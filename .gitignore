@@ -1,6 +1,7 @@
 __pycache__/
 .pytest_cache/
 *.pyc
+web/esc-test.html
 data/ocr-preview/
 data/*.html
 data/_dump.py

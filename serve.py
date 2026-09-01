@@ -9,7 +9,7 @@
   GET /v1/documents?city=
   GET /v1/status
   GET /v1/cities
-  GET /v1/parcel?q=
+  GET /v1/parcel?q=&account=
   GET /docs/<file>.pdf
 """
 
@@ -26,6 +26,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 WEB = HERE / "web"
 DOCS = HERE / "data" / "docs"
+_CACHE: dict = {}
 
 
 def _load(name: str):
@@ -33,6 +34,54 @@ def _load(name: str):
     if not path.is_file():
         return None
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _cached(name: str):
+    if name not in _CACHE:
+        _CACHE[name] = _load(name)
+    return _CACHE[name]
+
+
+def _city_match(name: str, rows: list) -> dict | None:
+    needle = (name or "").strip().lower()
+    if not needle:
+        return None
+    for row in rows or []:
+        if str(row.get("city") or "").strip().lower() == needle:
+            return row
+    return None
+
+
+def _enrich_parcels(payload: dict) -> dict:
+    from collectors.parcels import nearby_cameras
+
+    feats = payload.get("features") or []
+    cameras = (_cached("cameras.geojson") or {}).get("features") or []
+    cities = _cached("cities.json") or []
+    requests = _cached("requests.json") or []
+    for row in feats:
+        lat, lon = row.get("lat"), row.get("lon")
+        if isinstance(lat, (int, float)) and isinstance(lon, (int, float)):
+            row["nearby_cameras"] = nearby_cameras(lat, lon, cameras)
+        else:
+            row["nearby_cameras"] = []
+        city = _city_match(row.get("situs_city"), cities)
+        if city:
+            row["city_index"] = {
+                "city": city.get("city"),
+                "cameras": city.get("cameras"),
+                "has_contract_pdf": city.get("has_contract_pdf"),
+                "per_km2": city.get("per_km2"),
+                "share_pct": city.get("share_pct"),
+            }
+            req = _city_match(city.get("city"), requests)
+            if req:
+                row["request"] = {
+                    "portal": req.get("portal"),
+                    "mailto": req.get("mailto"),
+                    "inbox": req.get("inbox"),
+                }
+    return payload
 
 
 def _city_q(qs: dict) -> str:
@@ -48,7 +97,8 @@ def api(path: str, qs: dict):
         from collectors.parcels import lookup
 
         q = (qs.get("q") or qs.get("query") or [""])[0]
-        return lookup(q)
+        account = (qs.get("account") or [""])[0].strip() or None
+        return _enrich_parcels(lookup(q, account=account))
     if path in {"/v1/missing", "/v1/missing/"}:
         return _load("missing.json") or []
     if path in {"/v1/requests", "/v1/requests/"}:

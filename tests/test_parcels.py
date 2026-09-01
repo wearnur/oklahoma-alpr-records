@@ -1,0 +1,70 @@
+from collectors.parcels import (
+    centroid,
+    display_situs,
+    haversine_m,
+    nearby_cameras,
+    normalize_tokens,
+    parse_sale_date,
+    sanitize,
+    variants,
+    _where,
+    looks_like_address,
+)
+
+
+def test_sanitize_strips_injection():
+    assert "'" not in sanitize("O'Brien; drop table")
+    assert len(sanitize("a" * 200)) == 80
+
+
+def test_avenue_becomes_ave():
+    assert normalize_tokens("5309 N Dewey Avenue") == "5309 N DEWEY AVE"
+    assert normalize_tokens("5309 North Dewey Ave Oklahoma City") == "5309 N DEWEY AVE"
+    vs = variants("5309 N Dewey Avenue")
+    assert any(v == "5309 N DEWEY AVE" for v in vs)
+    assert any(v == "5309 N DEWEY" for v in vs)
+
+
+def test_address_where_does_not_search_owner():
+    where = _where("5309 N DEWEY AVE", None)
+    assert "name1" not in where
+    assert "UPPER(location)" in where
+    assert "5309 N DEWEY" in where
+
+
+def test_display_situs_strips_repeated_city():
+    assert display_situs(
+        "5309 N DEWEY AVE OKLAHOMA CITY OKLAHOMA CITY",
+        "OKLAHOMA CITY",
+    ) == "5309 N Dewey Ave"
+
+
+def test_sale_date_year_and_epoch():
+    assert parse_sale_date(2012) == "2012"
+    assert parse_sale_date(1609459200000) == "2021-01-01"
+    assert parse_sale_date(None) is None
+
+
+def test_centroid_closed_ring():
+    lat, lon = centroid(
+        {"rings": [[[-97.52, 35.52], [-97.53, 35.52], [-97.53, 35.53], [-97.52, 35.53], [-97.52, 35.52]]]}
+    )
+    assert lat == 35.525
+    assert lon == -97.525
+
+
+def test_nearby_cameras_radius():
+    cameras = [
+        {"geometry": {"coordinates": [-97.5224, 35.5245]}, "properties": {"name": "near", "packet": {"has_contract_pdf": True}}},
+        {"geometry": {"coordinates": [-97.0, 35.0]}, "properties": {"name": "far"}},
+    ]
+    hits = nearby_cameras(35.5245, -97.5224, cameras, radius_m=800)
+    assert [h["name"] for h in hits] == ["near"]
+    assert hits[0]["meters"] < 50
+    assert haversine_m(35.47, -97.52, 35.47, -97.52) == 0
+
+
+def test_looks_like_address():
+    assert looks_like_address("5309 N Dewey Ave")
+    assert not looks_like_address("Tulsa")
+    assert not looks_like_address("R1234567")
