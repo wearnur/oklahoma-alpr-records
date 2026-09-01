@@ -63,6 +63,10 @@ function reviewsUrl(name) {
   return "https://www.google.com/search?q=" + encodeURIComponent(String(name || "") + " Oklahoma reviews");
 }
 
+function socialUrl(name, site) {
+  return "https://www.google.com/search?q=" + encodeURIComponent("site:" + site + " " + String(name || "") + " Oklahoma");
+}
+
 function rollBtn(kind, value, label) {
   if (!value) return "";
   return `<button type="button" class="linkish" data-roll="${kind}" data-value="${encodeURIComponent(value)}">${esc(label)}</button>`;
@@ -77,10 +81,12 @@ function ownerRow(p) {
     extra,
     entity ? `<a href="${sosUrl()}" target="_blank" rel="noopener">SOS filing</a>` : "",
     entity ? `<a href="${reviewsUrl(p.owner)}" target="_blank" rel="noopener">Reviews</a>` : "",
+    entity ? `<a href="${socialUrl(p.owner, "facebook.com")}" target="_blank" rel="noopener">Facebook</a>` : "",
+    entity ? `<a href="${socialUrl(p.owner, "instagram.com")}" target="_blank" rel="noopener">Instagram</a>` : "",
   ].filter(Boolean).join(" ");
   const note = entity
-    ? `<p class="muted">Registered agent is on the SOS filing. Beneficial owners often are not. Mailing address below is the tax-roll contact. We do not scrape social media.</p>`
-    : `<p class="muted">Tax-roll name. Click for other parcels under the same string. No social scrape.</p>`;
+    ? `<p class="muted">SOS / reviews / social are search link-outs, not a scrape. Registered agent is on the filing; beneficial owners often are not.</p>`
+    : `<p class="muted">Tax-roll name. Click for other parcels under the same string. No personal social join.</p>`;
   return `<dt>Owner</dt><dd>${links}${note}</dd>`;
 }
 

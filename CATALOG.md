@@ -51,6 +51,7 @@ Status: `live` · `next` · `link` · `metered` · `no`
 |---|---|---|
 | oscn-search | OSCN name search | Prefilled link. User leaves our box on purpose. |
 | sos-search | SOS entity search | Prefilled link. |
+| entity-social-search | Facebook / Instagram search for an entity | Google `site:` search. User leaves on purpose. Not ingested. |
 | sors | Oklahoma Sex Offender Registry | Public DOC registry. Dedicated lookup, never auto-run on every name. |
 | okdoc-inmate | DOC inmate locator | Public. Same rule: explicit, not mixed into a general “who is this.” |
 | okc-court | Municipal court | City sites. |
@@ -75,7 +76,7 @@ Status: `live` · `next` · `link` · `metered` · `no`
 | locate-minors | Anything to find a child | No. |
 | unlisted-contact | Phones, emails not in a filing | Not public. |
 | phone-reverse | Reverse-lookup a cell / Whitepages / Truecaller | Not a public record. Skip-trace is a person index. If a number is printed on a filing we already have, show that filing. |
-| person-social | Homeowner social media from a name + house | Not a public record. That is a person dossier. Entity SOS filings and tax-roll mailing addresses are the contact we will show. |
+| person-social | Auto-join a person to Facebook/Instagram from a house | Hard no on the public card. That is a dossier. |
 | bank-medical | Financial / medical | Not public. |
 
 ## Operator / PI intelligence (not Pages)
