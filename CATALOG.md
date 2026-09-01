@@ -15,6 +15,7 @@ Status: `live` · `next` · `link` · `metered` · `no`
 | alpr-terms | Extracted retention, dollars, sharing | From those PDFs. |
 | ok-county-parcel | Oklahoma County parcels | Live assessor query. Autocomplete situs. Owner, market, assessed, land, recorded sale if published, nearby mapped cameras, city packet. Click owner or named subdivision for the tax-roll list (cap 40). |
 | ok-county-roll | Same-owner / same-plat list | Assessor `name1` / `subname`. Same string, not beneficial ownership. |
+| ok-county-clerk | Oklahoma County recorded deeds / mortgages | Official okcc.online guest search by plat/lot/block. Metadata on local `/v1/clerk`. GitHub Pages has no CORS — portal link. No document images. |
 | alpr-density | Cameras / km² and share of index | Computed. |
 | okc-opendata | OKC data.okc.gov catalog | 81 datasets labeled. Small civic tables pulled. Huge GIS is live-query. |
 | okc-land-docs | OKC land documents | City layer (grantor, address, instrument). Not the county clerk. |
@@ -36,7 +37,6 @@ Status: `live` · `next` · `link` · `metered` · `no`
 |---|---|---|
 | tulsa-parcel | Tulsa County assessor parcels | Parked until OKC is dense. |
 | cleveland-parcel | Cleveland County (Norman) parcels | Parked. |
-| ok-county-clerk | Oklahoma County recorded deeds / mortgages | OKCC.online. Attach to the parcel card. Not leases. |
 | ok-sos-entity | Oklahoma SOS business entities | Name, filing number, status, registered agent. |
 | oscn-docket | OSCN state court dockets | Public HTML. Case style, filings, not sealed/juvenile. |
 | municode | Municipal ordinances | Link + cite, not a full copy. |

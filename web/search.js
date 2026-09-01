@@ -254,6 +254,7 @@ function parcelDossier(p) {
     </dl>
     <p class="kicker">Nearby cameras · 1 mi</p>
     ${nearby ? `<ul class="nearby">${nearby}</ul>` : `<p class="muted">None mapped within a mile.</p>`}
+    ${clerkBlock(p.clerk)}
     <p class="actions">${actions}</p>
   </article>`;
 }
@@ -279,6 +280,22 @@ function paintSuggest(rows) {
       </li>`;
     })
     .join("");
+}
+
+function clerkBlock(clerk) {
+  if (!clerk) return "";
+  const portal = (clerk.portal && clerk.portal.url) || "https://www.okcc.online/index.php#ROD-Addr";
+  const hint = clerk.portal || {};
+  const feats = clerk.features || [];
+  const rows = feats
+    .map((d) => `<li>${esc(d.date || "")} · ${esc(d.type || "")} · bk ${esc(d.book || "")} p ${esc(d.page || "")} · ${esc(d.grantor || "")} → ${esc(d.grantee || "")}</li>`)
+    .join("");
+  const how = hint.plat
+    ? `Search platted ${esc(hint.plat)} lot ${esc(hint.lot || "")} block ${esc(hint.block || "")}`
+    : "Search by plat / lot / block";
+  return `<p class="kicker">County clerk instruments</p>
+    ${rows ? `<ul class="nearby">${rows}</ul>` : `<p class="muted">${esc(clerk.note || "Not loaded here.")} ${how} on the official portal.</p>`}
+    <p class="actions"><a href="${portal}" target="_blank" rel="noopener">okcc.online</a></p>`;
 }
 
 function paintLand(docs, i0) {
@@ -464,6 +481,37 @@ async function loadCameras() {
   return cameraCache;
 }
 
+async function fetchClerk(p) {
+  if (!p || !p.subdivision || !p.lot || !p.block) {
+    return {
+      features: [],
+      portal: { url: "https://www.okcc.online/index.php#ROD-Addr", plat: p && p.subdivision, lot: p && p.lot, block: p && p.block },
+      note: "Need named subdivision + lot + block.",
+    };
+  }
+  const qs = new URLSearchParams({
+    subdivision: p.subdivision,
+    lot: String(p.lot),
+    block: String(p.block),
+  });
+  try {
+    const r = await fetch("/v1/clerk?" + qs.toString());
+    if (r.ok) return r.json();
+  } catch (e) {
+    /* Pages has no /v1 and okcc.online has no CORS */
+  }
+  return {
+    features: [],
+    portal: {
+      url: "https://www.okcc.online/index.php#ROD-Addr",
+      plat: p.subdivision,
+      lot: p.lot,
+      block: p.block,
+    },
+    note: "Clerk list needs the local server. On GitHub Pages, use the official portal.",
+  };
+}
+
 async function fetchParcels(q, account) {
   const cameras = await loadCameras();
   if (globalThis.OKParcels && typeof OKParcels.lookup === "function") {
@@ -485,6 +533,13 @@ async function selectAccount(account, q) {
   const chosen = (parcels && parcels.features || []).find((p) => p.account === account)
     || (parcels && parcels.features && parcels.features[0]);
   if (chosen && chosen.situs_display) $q.value = chosen.situs_display;
+  if (chosen) {
+    try {
+      chosen.clerk = await fetchClerk(chosen);
+    } catch (e) {
+      chosen.clerk = null;
+    }
+  }
   let land = null;
   try {
     if (globalThis.OKC && chosen) land = await OKC.lookupLand(chosen.situs_display || q);
@@ -524,14 +579,27 @@ async function run() {
   const rows = (parcels && parcels.features) || [];
   if (selectedAccount && rows.length) {
     const chosen = rows.find((p) => p.account === selectedAccount) || rows[0];
+    try {
+      chosen.clerk = await fetchClerk(chosen);
+    } catch (e) {
+      chosen.clerk = null;
+    }
     paintSuggest([]);
     paint(hits, parcels, chosen, land);
     return;
   }
   selectedAccount = null;
   const one = rows.length === 1 && /\d/.test(q);
+  const pick = one ? rows[0] : null;
+  if (pick) {
+    try {
+      pick.clerk = await fetchClerk(pick);
+    } catch (e) {
+      pick.clerk = null;
+    }
+  }
   paintSuggest(one ? [] : rows);
-  paint(hits, parcels, one ? rows[0] : null, land);
+  paint(hits, parcels, pick, land);
 }
 
 Promise.all([

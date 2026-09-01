@@ -12,6 +12,7 @@
   GET /v1/parcel?q=&account=
   GET /v1/okc
   GET /v1/okc/land?q=
+  GET /v1/clerk?subdivision=&lot=&block=
   GET /docs/<file>.pdf
 """
 
@@ -95,6 +96,14 @@ def api(path: str, qs: dict):
         return _load("status.json") or {}
     if path in {"/v1/cities", "/v1/cities/"}:
         return _load("cities.json") or []
+    if path.startswith("/v1/clerk"):
+        from collectors.clerk import lookup_plat
+
+        return lookup_plat(
+            (qs.get("subdivision") or qs.get("plat") or [""])[0],
+            (qs.get("lot") or [""])[0],
+            (qs.get("block") or [""])[0],
+        )
     if path in {"/v1/okc", "/v1/okc/"}:
         return _load("okc-catalog.json") or {"error": "okc catalog missing — run ingest"}
     if path.startswith("/v1/okc/land"):
