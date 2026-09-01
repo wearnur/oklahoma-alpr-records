@@ -78,6 +78,12 @@ Status: `live` · `next` · `link` · `metered` · `no`
 | person-social | Homeowner social media from a name + house | Not a public record. That is a person dossier. Entity SOS filings and tax-roll mailing addresses are the contact we will show. |
 | bank-medical | Financial / medical | Not public. |
 
+## Operator / PI intelligence (not Pages)
+
+Skip-trace is useful. It is not a public record class. A PI license authorizes **the operator** to use licensed databases (TLO, Accurint, etc.). It does not authorize publishing unlisted phones, social graphs, or homeowner dossiers on GitHub Pages.
+
+That layer stays off `wearnur.github.io`. It can exist later as a local, authenticated desk that the operator logs into, joining a parcel to a commercial file he already has a right to query. It must not auto-run on every name. Locate-minors stays a hard no.
+
 ## Product rule
 
-Inquire is a **catalog search**, not a profile of a human. One query can return a city packet, a parcel, and a link to OSCN. It must not assemble “John Smith — felony, offender, house value, reviews” as a dossier. That is Samaritan. We index records, not people.
+The **public** inquire is a catalog of civic records, not a profile of a human. One query can return a city packet, a parcel, and a link to OSCN. It must not assemble “John Smith — felony, offender, house value, reviews, Facebook” as a dossier on the public site. That is Samaritan. We index records in public. Intelligence stays gated.

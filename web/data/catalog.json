@@ -5,6 +5,7 @@
   {"id": "ok-county-parcel", "class": "Oklahoma County parcels (owner, market, recorded sale)", "status": "live", "query": ["parcel", "property", "assessor", "sold"]},
   {"id": "ok-county-roll", "class": "Same-owner or same-subdivision tax roll", "status": "live", "query": ["owner", "subdivision", "plat"]},
   {"id": "person-social", "class": "Homeowner social media", "status": "no"},
+  {"id": "skip-trace", "class": "Skip-trace / PI databases (operator desk, not Pages)", "status": "no", "note": "Licensed commercial files for the operator. Not the public index."},
   {"id": "okc-opendata", "class": "OKC open-data catalog (labeled, holes named)", "status": "live", "query": ["okc", "311", "permit", "zoning"]},
   {"id": "okc-land-docs", "class": "OKC land documents", "status": "live", "query": ["deed", "grantor", "land"]},
   {"id": "alpr-density", "class": "Cameras per km²", "status": "live", "query": ["density", "surveillance"]},
