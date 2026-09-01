@@ -1,6 +1,11 @@
-/* Living HUD: irregular side hashes, rotating rail patterns, L-brackets. */
+/* Living HUD: persistent ticks that ease up/down instead of layout cuts. */
 (function (global) {
-  const PATTERNS = ["doublet", "cluster", "sparse", "stagger", "burst"];
+  const HASH_N = 12;
+  const BAR_N = 5;
+
+  function reduceMotion() {
+    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
 
   function rng(seed) {
     let s = seed >>> 0;
@@ -8,10 +13,6 @@
       s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
       return s / 4294967296;
     };
-  }
-
-  function reduceMotion() {
-    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   }
 
   function buildMosaic(root) {
@@ -41,108 +42,89 @@
     root.appendChild(frag);
   }
 
-  function ticksFor(h, rand, name) {
-    const ticks = [];
-    let y = 6 + rand() * 18;
-    if (name === "doublet") {
-      while (y < h - 14) {
-        ticks.push({ y, h: 1, w: 5 + rand() * 5 });
-        ticks.push({ y: y + 3 + rand() * 2, h: 1, w: 4 + rand() * 6 });
-        y += 14 + rand() * 34;
-      }
-    } else if (name === "cluster") {
-      const clusters = 3 + Math.floor(rand() * 3);
-      for (let c = 0; c < clusters; c += 1) {
-        let yy = 12 + ((h - 36) * c) / clusters + rand() * 22;
-        const n = 3 + Math.floor(rand() * 6);
-        for (let i = 0; i < n; i += 1) {
-          ticks.push({ y: yy, h: 1, w: 3 + rand() * 8 });
-          yy += 3 + rand() * 7;
-        }
-      }
-    } else if (name === "sparse") {
-      while (y < h - 14) {
-        ticks.push({ y, h: 1 + Math.floor(rand() * 2), w: 7 + rand() * 8 });
-        y += 26 + rand() * 52;
-      }
-    } else if (name === "stagger") {
-      while (y < h - 14) {
-        ticks.push({ y, h: 1, w: 3 + rand() * 9 });
-        y += 7 + rand() * 20;
-      }
-    } else {
-      const mid = h * (0.22 + rand() * 0.55);
-      for (let i = 0; i < 14; i += 1) {
-        ticks.push({ y: mid + (rand() - 0.5) * 90, h: 1, w: 2 + rand() * 11 });
-      }
-      let yy = 10;
-      while (yy < h - 12) {
-        if (Math.abs(yy - mid) > 48) ticks.push({ y: yy, h: 1, w: 4 + rand() * 4 });
-        yy += 20 + rand() * 44;
-      }
-    }
-    return ticks;
+  function clamp(n, a, b) {
+    return Math.max(a, Math.min(b, n));
   }
 
-  function paintCol(col, name, seed) {
-    if (!col) return;
-    const rand = rng(seed);
-    const h = col.clientHeight || 1;
-    const ticks = ticksFor(h, rand, name);
+  function spawnCol(col) {
+    if (!col || col.children.length) return;
     const frag = document.createDocumentFragment();
-    ticks.forEach((t) => {
-      if (t.y < 0 || t.y > h) return;
+    for (let i = 0; i < HASH_N + BAR_N; i += 1) {
       const el = document.createElement("i");
-      el.style.top = t.y.toFixed(1) + "px";
-      el.style.height = t.h + "px";
-      el.style.width = t.w.toFixed(1) + "px";
-      el.style.opacity = (0.45 + rand() * 0.5).toFixed(2);
+      el.dataset.kind = i < HASH_N ? "hash" : "bar";
       frag.appendChild(el);
-    });
-    col.innerHTML = "";
+    }
     col.appendChild(frag);
   }
 
-  let current = "";
-  let timer = null;
+  function place(el, y, w, h, o, dur) {
+    el.style.transition =
+      "top " + dur + "s cubic-bezier(.37,.01,.16,1), " +
+      "width " + (dur * 0.85).toFixed(2) + "s ease, " +
+      "height " + dur + "s cubic-bezier(.37,.01,.16,1), " +
+      "opacity " + (dur * 0.6).toFixed(2) + "s ease";
+    el.style.top = y.toFixed(1) + "px";
+    el.style.width = w.toFixed(1) + "px";
+    el.style.height = h.toFixed(1) + "px";
+    el.style.opacity = o.toFixed(2);
+  }
 
-  function applyMode() {
-    if (reduceMotion()) return;
+  function nudge(el, col) {
+    if (!live || !col.isConnected) return;
+    const max = Math.max(40, col.clientHeight - 10);
+    const dur = 0.9 + Math.random() * 1.8;
+    const cur = parseFloat(el.style.top) || max * 0.5;
+    if (el.dataset.kind === "bar") {
+      const y = clamp(cur + (Math.random() - 0.5) * 52, 4, max - 24);
+      place(el, y, 2 + Math.random() * 3.5, 10 + Math.random() * 46, 0.28 + Math.random() * 0.5, dur);
+    } else {
+      const y = clamp(cur + (Math.random() - 0.5) * 86, 4, max - 4);
+      place(el, y, 3 + Math.random() * 13, 1 + Math.random() * 2.2, 0.34 + Math.random() * 0.55, dur);
+    }
+    el._t = setTimeout(() => nudge(el, col), dur * 1000 + 180 + Math.random() * 1600);
+  }
+
+  function seedCol(col) {
+    const max = Math.max(40, col.clientHeight - 10);
+    const kids = [...col.children];
+    kids.forEach((el, i) => {
+      clearTimeout(el._t);
+      const y = 6 + ((i + 0.15) / kids.length) * (max - 12);
+      el.style.transition = "none";
+      if (el.dataset.kind === "bar") {
+        el.style.top = y + "px";
+        el.style.width = "3px";
+        el.style.height = "16px";
+        el.style.opacity = "0.4";
+      } else {
+        el.style.top = y + "px";
+        el.style.width = "6px";
+        el.style.height = "1px";
+        el.style.opacity = "0.5";
+      }
+      const wait = 80 + Math.random() * 900;
+      el._t = setTimeout(() => nudge(el, col), wait);
+    });
+  }
+
+  let live = false;
+
+  function startLive() {
+    if (live || reduceMotion()) return;
+    live = true;
     const west = document.querySelector(".hash-col.west");
     const east = document.querySelector(".hash-col.east");
-    let next = PATTERNS[Math.floor(Math.random() * PATTERNS.length)];
-    if (PATTERNS.length > 1) {
-      while (next === current) next = PATTERNS[Math.floor(Math.random() * PATTERNS.length)];
-    }
-    current = next;
-    const eastPat =
-      Math.random() > 0.45 ? next : PATTERNS[Math.floor(Math.random() * PATTERNS.length)];
-    document.body.setAttribute("data-hud", next);
-    const seed = (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0;
-    paintCol(west, next, seed);
-    paintCol(east, eastPat, seed ^ 0x9e3779b9);
-    const root = document.documentElement;
-    root.style.setProperty("--pip-dur", (4.6 + Math.random() * 5.5).toFixed(2) + "s");
-    root.style.setProperty("--pip-dur-2", (5.2 + Math.random() * 6).toFixed(2) + "s");
-    root.style.setProperty("--rail-dur", (2.1 + Math.random() * 2.4).toFixed(2) + "s");
-    document.body.classList.toggle("hud-flip-pip", Math.random() > 0.5);
-    document.body.classList.toggle("hud-quiet-east", Math.random() > 0.62);
-    document.body.classList.toggle("hud-wide-bracket", Math.random() > 0.55);
+    spawnCol(west);
+    spawnCol(east);
+    requestAnimationFrame(() => {
+      seedCol(west);
+      seedCol(east);
+    });
   }
 
-  function startCycle() {
-    stopCycle();
-    applyMode();
-    const beat = () => {
-      applyMode();
-      timer = setTimeout(beat, 7000 + Math.random() * 8000);
-    };
-    timer = setTimeout(beat, 8000 + Math.random() * 6000);
-  }
-
-  function stopCycle() {
-    clearTimeout(timer);
-    timer = null;
+  function stopLive() {
+    live = false;
+    document.querySelectorAll(".hash-col i").forEach((el) => clearTimeout(el._t));
   }
 
   function boot() {
@@ -154,17 +136,11 @@
       const loading = document.body.classList.contains("is-loading");
       const revealing = document.body.classList.contains("is-revealing");
       if (mosaic) mosaic.hidden = !loading && !revealing;
-      if (framed && !timer) requestAnimationFrame(() => startCycle());
-      if (!framed) {
-        stopCycle();
-        document.body.removeAttribute("data-hud");
-      }
+      if (framed) startLive();
+      else stopLive();
     };
     const mo = new MutationObserver(sync);
     mo.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-    window.addEventListener("resize", () => {
-      if (document.body.classList.contains("is-framed")) applyMode();
-    });
     sync();
   }
 
@@ -174,5 +150,5 @@
     boot();
   }
 
-  global.OKHud = { applyMode };
+  global.OKHud = { startLive, stopLive };
 })(window);

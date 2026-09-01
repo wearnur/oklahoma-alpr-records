@@ -528,6 +528,7 @@ body.pdf-open { overflow: hidden; }
   height: 26px;
   opacity: 0;
   border-color: #8e8e86;
+  transition: opacity 0.5s ease;
 }
 .bracket.tl { top: var(--stage-top); left: var(--stage-side); border-top: 2px solid; border-left: 2px solid; }
 .bracket.tr { top: var(--stage-top); right: var(--stage-side); border-top: 2px solid; border-right: 2px solid; }
@@ -560,6 +561,7 @@ body.pdf-open { overflow: hidden; }
   position: absolute;
   left: 0;
   background: #8e8e86;
+  will-change: top, width, height, opacity;
 }
 .hash-col.east i { left: auto; right: 0; }
 
@@ -584,18 +586,8 @@ body.is-framed .bracket { opacity: 0.85; }
 body.is-framed .tick { opacity: 1; }
 body.is-framed .hash-col { opacity: 1; }
 body.is-framed .pip { opacity: 0.95; }
-body.is-framed .pip.west { animation: pip-run var(--pip-dur, 6.4s) linear infinite; }
-body.is-framed .pip.east { animation: pip-run var(--pip-dur-2, 7.1s) linear infinite reverse; }
-body.is-framed.hud-flip-pip .pip.west { animation-direction: reverse; }
-body.is-framed.hud-flip-pip .pip.east { animation-direction: normal; }
-body.is-framed.hud-quiet-east .hash-col.east,
-body.is-framed.hud-quiet-east .pip.east { opacity: 0.28; }
-body.is-framed.hud-wide-bracket .bracket { width: 38px; height: 38px; }
-body[data-hud="sparse"] .rail { opacity: 0.45; }
-body[data-hud="burst"] .pip { height: 18px; }
-body[data-hud="cluster"] .hash-col.west { animation: hash-drift 9s ease-in-out infinite; }
-body[data-hud="stagger"] .hash-col.east { animation: hash-drift 11s ease-in-out infinite reverse; }
-body[data-hud="doublet"] .bracket { width: 22px; height: 34px; }
+body.is-framed .pip.west { animation: pip-run 6.8s linear infinite; }
+body.is-framed .pip.east { animation: pip-run 8.2s linear infinite reverse; }
 body.is-framed .stage {
   box-shadow:
     0 0 28px rgba(20, 20, 20, 0.14),
@@ -605,10 +597,6 @@ body.is-framed .stage {
 @keyframes rail-breathe {
   0%, 100% { opacity: 0.5; }
   50% { opacity: 1; }
-}
-@keyframes hash-drift {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(10px); }
 }
 @keyframes pip-run {
   from { top: calc(var(--stage-top) + 10px); }
