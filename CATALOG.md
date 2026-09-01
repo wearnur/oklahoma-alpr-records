@@ -13,7 +13,8 @@ Status: `live` · `next` · `link` · `metered` · `no`
 | alpr-osm | ALPR / Flock camera pins | OSM. No plates. |
 | alpr-contracts | City ALPR contracts and renewals | OKC + Broken Arrow PDFs. Holes queued. |
 | alpr-terms | Extracted retention, dollars, sharing | From those PDFs. |
-| ok-county-parcel | Oklahoma County parcels | Live assessor query. Autocomplete situs. Owner, market, assessed, land, recorded sale if published, nearby mapped cameras, city packet. |
+| ok-county-parcel | Oklahoma County parcels | Live assessor query. Autocomplete situs. Owner, market, assessed, land, recorded sale if published, nearby mapped cameras, city packet. Click owner or named subdivision for the tax-roll list (cap 40). |
+| ok-county-roll | Same-owner / same-plat list | Assessor `name1` / `subname`. Same string, not beneficial ownership. |
 | alpr-density | Cameras / km² and share of index | Computed. |
 | okc-opendata | OKC data.okc.gov catalog | 81 datasets labeled. Small civic tables pulled. Huge GIS is live-query. |
 | okc-land-docs | OKC land documents | City layer (grantor, address, instrument). Not the county clerk. |
@@ -59,7 +60,7 @@ Status: `live` · `next` · `link` · `metered` · `no`
 | ID | Class | Notes |
 |---|---|---|
 | zillow | Zillow Zestimate / sold comps | Sold comps originate in county recorder/assessor filings and MLS (brokers opt in). Zestimate is a model. We use Oklahoma County `SalePrice`. MLS via Warner’s license is the other legitimate path — not a scrape. |
-| google-places | Business reviews, hours | Metered. |
+| google-places | Business reviews, hours | Metered. Entity parcels get a Google search link-out, not a scrape. |
 | yelp | Reviews | Metered / ToS. |
 | pacer | Federal court | PACER fees. |
 | lexes-nexis | Aggregated people | Commercial, not our index. |
@@ -74,6 +75,7 @@ Status: `live` · `next` · `link` · `metered` · `no`
 | locate-minors | Anything to find a child | No. |
 | unlisted-contact | Phones, emails not in a filing | Not public. |
 | phone-reverse | Reverse-lookup a cell / Whitepages / Truecaller | Not a public record. Skip-trace is a person index. If a number is printed on a filing we already have, show that filing. |
+| person-social | Homeowner social media from a name + house | Not a public record. That is a person dossier. Entity SOS filings and tax-roll mailing addresses are the contact we will show. |
 | bank-medical | Financial / medical | Not public. |
 
 ## Product rule

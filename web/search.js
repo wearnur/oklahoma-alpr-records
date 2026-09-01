@@ -42,6 +42,54 @@ function row(label, value) {
   return `<dt>${label}</dt><dd>${esc(value)}</dd>`;
 }
 
+function isEntity(name) {
+  if (globalThis.OKParcels && typeof OKParcels.isEntity === "function") return OKParcels.isEntity(name);
+  return /\b(LLC|L\.L\.C\.?|INC\.?|INCORPORATED|CORP\.?|CORPORATION|LTD\.?|LLP|PLLC|COMPANY)\b/i.test(name || "");
+}
+
+function isNamedSubdivision(name) {
+  if (globalThis.OKParcels && typeof OKParcels.isNamedSubdivision === "function") {
+    return OKParcels.isNamedSubdivision(name);
+  }
+  const s = String(name || "").trim().toUpperCase();
+  return s.length >= 3 && !s.startsWith("UNPLTD");
+}
+
+function sosUrl() {
+  return "https://www.sos.ok.gov/corp/corpInquiryFind.aspx";
+}
+
+function reviewsUrl(name) {
+  return "https://www.google.com/search?q=" + encodeURIComponent(String(name || "") + " Oklahoma reviews");
+}
+
+function rollBtn(kind, value, label) {
+  if (!value) return "";
+  return `<button type="button" class="linkish" data-roll="${kind}" data-value="${encodeURIComponent(value)}">${esc(label)}</button>`;
+}
+
+function ownerRow(p) {
+  if (!p.owner) return "";
+  const extra = p.owner2 ? ` · ${esc(p.owner2)}` : "";
+  const entity = isEntity(p.owner);
+  const links = [
+    rollBtn("owner", p.owner, p.owner),
+    extra,
+    entity ? `<a href="${sosUrl()}" target="_blank" rel="noopener">SOS filing</a>` : "",
+    entity ? `<a href="${reviewsUrl(p.owner)}" target="_blank" rel="noopener">Reviews</a>` : "",
+  ].filter(Boolean).join(" ");
+  const note = entity
+    ? `<p class="muted">Registered agent is on the SOS filing. Beneficial owners often are not. Mailing address below is the tax-roll contact. We do not scrape social media.</p>`
+    : `<p class="muted">Tax-roll name. Click for other parcels under the same string. No social scrape.</p>`;
+  return `<dt>Owner</dt><dd>${links}${note}</dd>`;
+}
+
+function subdivisionRow(p) {
+  if (!p.subdivision) return "";
+  if (!isNamedSubdivision(p.subdivision)) return row("Subdivision", p.subdivision);
+  return `<dt>Subdivision</dt><dd>${rollBtn("subdivision", p.subdivision, p.subdivision)}</dd>`;
+}
+
 function isLocalHost() {
   return location.hostname === "127.0.0.1" || location.hostname === "localhost";
 }
@@ -185,7 +233,7 @@ function parcelDossier(p) {
     <p class="muted">${cityLine}</p>
     <dl>
       ${row("Account", p.account)}
-      ${row("Owner", [p.owner, p.owner2].filter(Boolean).join(" · "))}
+      ${ownerRow(p)}
       ${row("Market", money(p.market) || "")}
       ${row("Assessed", money(p.assessed))}
       ${row("Taxable", money(p.taxable))}
@@ -193,7 +241,7 @@ function parcelDossier(p) {
       ${row("Last sale", sold)}
       ${row("Acres", p.acres)}
       ${row("Type", p.acct_type)}
-      ${row("Subdivision", p.subdivision)}
+      ${subdivisionRow(p)}
       ${row("Legal", p.legal)}
       ${row("Mail", [p.mail, p.mail_city, p.mail_state, p.zip].filter(Boolean).join(", "))}
       ${row("Tax dist.", p.tax_district)}
@@ -540,7 +588,43 @@ if ($suggest) {
     selectAccount(li.getAttribute("data-account"), $q.value.trim());
   });
 }
+async function openRoll(kind, value) {
+  paintSuggest([]);
+  $ambient.hidden = true;
+  if (!globalThis.OKParcels || typeof OKParcels.lookupBy !== "function") {
+    $out.innerHTML = rise(`<p class="muted">Assessor roll is unavailable.</p>`, 0);
+    return;
+  }
+  const payload = await OKParcels.lookupBy(kind, value, { limit: 40 });
+  const feats = payload.features || [];
+  const parts = [
+    rise(`<p class="kicker">Tax roll · ${esc(kind)} · ${feats.length}${feats.length === 40 ? "+" : ""}</p>`, 0),
+    rise(`<p class="muted">${esc(value)} — same assessor string, not beneficial ownership. Cap 40.</p>`, 1),
+  ];
+  if (payload.note && !feats.length) {
+    parts.push(rise(`<p class="muted">${esc(payload.note)}</p>`, 2));
+  }
+  feats.forEach((p, i) => {
+    parts.push(rise(
+      `<article class="hit" data-pick="${p.account || ""}">
+        <p>${esc(p.situs_display || p.situs || p.account)}</p>
+        <p class="muted">${esc(p.owner || "")} · market ${money(p.market) || "—"}</p>
+      </article>`,
+      i + 2
+    ));
+  });
+  $out.innerHTML = parts.join("");
+}
+
 $out.addEventListener("click", (e) => {
+  const roll = e.target.closest("[data-roll]");
+  if (roll) {
+    e.preventDefault();
+    const kind = roll.getAttribute("data-roll");
+    const value = decodeURIComponent(roll.getAttribute("data-value") || "");
+    openRoll(kind, value);
+    return;
+  }
   const hit = e.target.closest("[data-pick]");
   if (!hit) return;
   selectAccount(hit.getAttribute("data-pick"), $q.value.trim());

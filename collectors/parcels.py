@@ -100,6 +100,25 @@ def is_assessor_query(q: str) -> bool:
     return looks_like_account(q) or looks_like_address(q)
 
 
+ENTITY_RE = re.compile(
+    r"\b(LLC|L\.L\.C\.?|INC\.?|INCORPORATED|CORP\.?|CORPORATION|LTD\.?|LLP|PLLC|COMPANY)\b",
+    re.I,
+)
+
+
+def is_entity(name: str) -> bool:
+    return bool(ENTITY_RE.search(name or ""))
+
+
+def is_named_subdivision(name: str) -> bool:
+    s = sanitize(name)
+    if len(s) < 3:
+        return False
+    if s.startswith("UNPLTD"):
+        return False
+    return True
+
+
 def _strip_city_tail(s: str) -> str:
     out = s
     changed = True
@@ -357,4 +376,41 @@ def lookup(q: str, limit: int = 8, account: str | None = None) -> dict:
         "county": "Oklahoma County",
         "features": rows[:limit],
         "note": "Oklahoma County assessor public layer. Recorded sale if published. Residential leases are not a public record.",
+    }
+
+
+def lookup_by(field: str, value: str, limit: int = 40) -> dict:
+    """Exact assessor roll: same owner string or same plat name. Not a person dossier."""
+    key = {"owner": "name1", "subdivision": "subname"}.get(field)
+    needle = sanitize(value)
+    if not key or len(needle) < 3:
+        return {"ok": True, "query": needle, "features": [], "note": "need owner or subdivision"}
+    if field == "subdivision" and not is_named_subdivision(needle):
+        return {"ok": True, "query": needle, "features": [], "note": "unplatted tract, not a named subdivision"}
+    like = needle.replace("'", "")
+    where = f"UPPER({key})='{like}'"
+    qs = urllib.parse.urlencode(
+        {
+            "where": where,
+            "outFields": FIELDS,
+            "returnGeometry": "true",
+            "outSR": "4326",
+            "resultRecordCount": str(min(limit, 40)),
+            "f": "json",
+        }
+    )
+    req = urllib.request.Request(LAYER + "?" + qs, headers={"User-Agent": UA})
+    raw = urllib.request.urlopen(req, timeout=20).read()
+    payload = json.loads(raw.decode())
+    if payload.get("error"):
+        return {"ok": False, "error": payload["error"], "features": []}
+    rows = [_row(feat) for feat in payload.get("features") or []]
+    rows.sort(key=lambda r: sanitize(r.get("situs") or r.get("account") or ""))
+    return {
+        "ok": True,
+        "query": needle,
+        "field": field,
+        "county": "Oklahoma County",
+        "features": rows[:limit],
+        "note": "Oklahoma County tax roll. Same name string, not beneficial ownership.",
     }

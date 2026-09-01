@@ -48,6 +48,17 @@
     return /\d/.test(s);
   }
 
+  const ENTITY_RE = /\b(LLC|L\.L\.C\.?|INC\.?|INCORPORATED|CORP\.?|CORPORATION|LTD\.?|LLP|PLLC|COMPANY)\b/i;
+
+  function isEntity(name) {
+    return ENTITY_RE.test(String(name || ""));
+  }
+
+  function isNamedSubdivision(name) {
+    const s = sanitize(name);
+    return s.length >= 3 && !s.startsWith("UNPLTD");
+  }
+
   function stripCityTail(s) {
     let out = s;
     let changed = true;
@@ -334,8 +345,43 @@
     };
   }
 
+  async function lookupBy(field, value, opts) {
+    opts = opts || {};
+    const key = field === "owner" ? "name1" : field === "subdivision" ? "subname" : null;
+    const needle = sanitize(value);
+    if (!key || needle.length < 3) {
+      return { ok: true, query: needle, features: [] };
+    }
+    if (field === "subdivision" && !isNamedSubdivision(needle)) {
+      return { ok: true, query: needle, features: [], note: "unplatted tract, not a named subdivision" };
+    }
+    const params = new URLSearchParams({
+      where: "UPPER(" + key + ")='" + needle.replace(/'/g, "") + "'",
+      outFields: FIELDS,
+      returnGeometry: "false",
+      resultRecordCount: String(opts.limit || 40),
+      f: "json",
+    });
+    const res = await fetch(LAYER + "?" + params.toString());
+    const payload = await res.json();
+    if (payload.error) return { ok: false, error: payload.error, features: [] };
+    const rows = (payload.features || []).map(rowFromFeature);
+    rows.sort((a, b) => String(a.situs_display || a.account || "").localeCompare(String(b.situs_display || b.account || "")));
+    return {
+      ok: true,
+      query: needle,
+      field,
+      county: "Oklahoma County",
+      features: rows,
+      note: "Oklahoma County tax roll. Same name string, not beneficial ownership.",
+    };
+  }
+
   global.OKParcels = {
     lookup,
+    lookupBy,
+    isEntity,
+    isNamedSubdivision,
     sanitize,
     variants,
     normalizeTokens,

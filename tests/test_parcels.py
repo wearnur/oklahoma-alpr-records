@@ -3,6 +3,8 @@ from collectors.parcels import (
     display_situs,
     haversine_m,
     is_assessor_query,
+    is_entity,
+    is_named_subdivision,
     nearby_cameras,
     normalize_tokens,
     parse_sale_date,
@@ -80,3 +82,11 @@ def test_looks_like_address():
 def test_display_situs_drops_unknown_placeholder():
     assert display_situs("0 UNKNOWN", "EDMOND") == ""
     assert display_situs("0 Unknown", None) == ""
+
+
+def test_entity_and_subdivision_gates():
+    assert is_entity("BARNES OKC LLC")
+    assert is_entity("PETROLEUM CLUB OKC INC")
+    assert not is_entity("WARNER EARL & JEWEL")
+    assert is_named_subdivision("WILEMAN ADDITION")
+    assert not is_named_subdivision("UNPLTD PT SEC 29 14N 2W")

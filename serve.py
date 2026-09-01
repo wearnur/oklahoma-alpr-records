@@ -107,6 +107,13 @@ def api(path: str, qs: dict):
 
         q = (qs.get("q") or qs.get("query") or [""])[0]
         account = (qs.get("account") or [""])[0].strip() or None
+        owner = (qs.get("owner") or [""])[0].strip()
+        subdivision = (qs.get("subdivision") or [""])[0].strip()
+        if owner or subdivision:
+            from collectors.parcels import lookup_by
+
+            field = "owner" if owner else "subdivision"
+            return lookup_by(field, owner or subdivision)
         return _enrich_parcels(lookup(q, account=account))
     if path in {"/v1/missing", "/v1/missing/"}:
         return _load("missing.json") or []
