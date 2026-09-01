@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Missing — Oklahoma ALPR</title>
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="index.html">Oklahoma ALPR index</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="map.html">Index</a>
+      <a class="on" href="missing.html">Missing</a>
+      <a href="records.html">Records</a>
+    </nav>
+  </header>
+  <div class="meta">
+    <span>Open records queue</span>
+    <span>We draft. You file. Cities reply.</span>
+  </div>
+  <main class="page">
+    <p class="kicker">Holes</p>
+    <h1>Cities with cameras and no contract PDF.</h1>
+    <p class="lede">File the request through the city portal. Ask them to email the packet. We ingest when it arrives.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>City</th>
+          <th>Cameras</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="rows">
+        <tr><td colspan="5" class="muted">Loading</td></tr>
+      </tbody>
+    </table>
+  </main>
+  <script>
+    function money(n) {
+      if (n == null || n === "") return "—";
+      return "$" + Number(n).toLocaleString();
+    }
+    Promise.all([
+      fetch("data/missing.json").then((r) => r.json()),
+      fetch("data/requests.json").then((r) => r.json()).catch(() => []),
+    ]).then(([missing, requests]) => {
+      const body = document.getElementById("rows");
+      if (!missing.length) {
+        body.innerHTML = "<tr><td colspan='5'>None.</td></tr>";
+        return;
+      }
+      body.innerHTML = missing.map((m) => {
+        const req = requests.find((r) => r.city === m.city);
+        const portal = req && req.portal
+          ? `<a href="${req.portal}" target="_blank" rel="noopener">Portal</a>`
+          : "";
+        const copy = req
+          ? `<button class="btn" type="button" data-copy="${m.city}">Copy request</button>`
+          : "";
+        return `<tr>
+          <td><a href="map.html?city=${encodeURIComponent(m.city)}">${m.city}</a></td>
+          <td class="num">${m.cameras}</td>
+          <td class="num">${money(m.amount_usd)}</td>
+          <td>${m.status || "—"}</td>
+          <td>${portal} ${copy}</td>
+        </tr>`;
+      }).join("");
+      body.querySelectorAll("[data-copy]").forEach((b) => {
+        b.onclick = () => {
+          const req = requests.find((r) => r.city === b.dataset.copy);
+          if (req) navigator.clipboard.writeText(req.subject + "\n\n" + req.body);
+        };
+      });
+    });
+  </script>
+</body>
+</html>

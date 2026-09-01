@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Index — Oklahoma ALPR</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body class="map-page">
+  <header class="top">
+    <a class="brand" href="index.html">Oklahoma ALPR index</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a class="on" href="map.html">Index</a>
+      <a href="missing.html">Missing</a>
+      <a href="records.html">Records</a>
+    </nav>
+  </header>
+  <div class="meta">
+    <span id="stats">Loading</span>
+    <span class="legend">
+      <span><i class="swatch is-ok"></i>packet</span>
+      <span><i class="swatch is-hole"></i>no pdf</span>
+      <span><i class="swatch is-none"></i>unknown</span>
+    </span>
+  </div>
+  <div class="map-wrap">
+    <div id="map"></div>
+    <aside id="rail">
+      <input class="filter" id="q" type="search" placeholder="Filter city, vendor, operator" />
+      <p class="muted" id="dossier-empty">Select an asset.</p>
+      <div id="dossier" hidden></div>
+    </aside>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Records — Oklahoma ALPR</title>
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="index.html">Oklahoma ALPR index</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="map.html">Index</a>
+      <a href="missing.html">Missing</a>
+      <a class="on" href="records.html">Records</a>
+    </nav>
+  </header>
+  <div class="meta">
+    <span>Extracted terms</span>
+    <span>Source PDFs</span>
+  </div>
+  <main class="page">
+    <p class="kicker">On file</p>
+    <h1>Packets we have already read.</h1>
+    <p class="lede">Oklahoma City C241032 and Broken Arrow 23-1170. Everything else is a hole.</p>
+    <div id="terms"></div>
+    <p class="kicker" style="margin-top:2.5rem">Documents</p>
+    <ul class="docs" id="docs"></ul>
+  </main>
+  <script>
+    function money(n) {
+      if (n == null || n === "") return "—";
+      return "$" + Number(n).toLocaleString();
+    }
+    function localPdf(url) {
+      const name = (url || "").split("/").pop();
+      if (name && name.toLowerCase().endsWith(".pdf")) return "/docs/" + name;
+      return url;
+    }
+    Promise.all([
+      fetch("data/terms.json").then((r) => r.json()),
+      fetch("data/documents.json").then((r) => r.json()),
+    ]).then(([terms, docs]) => {
+      document.getElementById("terms").innerHTML = terms.map((t) => {
+        const ret = (t.retention && (t.retention.order_form || t.retention.msa_default)) || "";
+        const amt = t.money && (t.money.annual_usd || t.money.contract_total_usd);
+        const end = t.term && t.term.renewal_2 && t.term.renewal_2.end;
+        return `<article class="record">
+          <h2>${t.city}</h2>
+          <p>${t.contract_id || t.file_number || ""} · ${money(amt)} · ${ret.split(";")[0]}</p>
+          <p class="muted">${end ? "Renewal through " + end : "No end date extracted"}</p>
+        </article>`;
+      }).join("") || "<p class='muted'>None.</p>";
+      document.getElementById("docs").innerHTML = docs.map((d) =>
+        `<li><a href="${localPdf(d.url)}">${d.city || ""} — ${d.name}</a></li>`
+      ).join("");
+    });
+  </script>
+</body>
+</html>

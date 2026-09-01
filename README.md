@@ -16,6 +16,8 @@ python serve.py
 
 Open http://127.0.0.1:8765/
 
+Pages: home, [index](map.html) (map + dossier), [missing](missing.html), [records](records.html).
+
 Click a pin for the **dossier** (terms, PDF, Street View, copy-ready Open Records text). Missing packets are the default tab.
 
 ```text
