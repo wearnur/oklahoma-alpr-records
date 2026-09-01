@@ -95,6 +95,11 @@ def looks_like_address(q: str) -> bool:
     return bool(re.search(r"\d", s))
 
 
+def is_assessor_query(q: str) -> bool:
+    """Situs or account only. 'OKC' is a city token, not an owner search."""
+    return looks_like_account(q) or looks_like_address(q)
+
+
 def _strip_city_tail(s: str) -> str:
     out = s
     changed = True
@@ -111,6 +116,8 @@ def _strip_city_tail(s: str) -> str:
 def display_situs(location: str | None, city: str | None) -> str:
     s = (location or "").strip()
     if not s:
+        return ""
+    if re.match(r"^0+\s*UNKNOWN$", s.upper()) or s.upper() in {"UNKNOWN", "N/A", "NONE", "NULL"}:
         return ""
     city = (city or "").strip()
     if city:
@@ -314,6 +321,13 @@ def lookup(q: str, limit: int = 8, account: str | None = None) -> dict:
         needle = sanitize(account) or needle
     if len(needle) < 3:
         return {"ok": True, "query": needle, "features": [], "note": "type more"}
+    if not account and not is_assessor_query(needle):
+        return {
+            "ok": True,
+            "query": needle,
+            "features": [],
+            "note": "Assessor lookup needs a street address or account number.",
+        }
     where = _where(needle, account)
     qs = urllib.parse.urlencode(
         {

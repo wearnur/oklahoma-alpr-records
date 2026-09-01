@@ -71,6 +71,7 @@
   function displaySitus(location, city) {
     let s = String(location || "").trim();
     if (!s) return "";
+    if (/^0+\s*UNKNOWN$/i.test(s) || /^(UNKNOWN|N\/A|NONE|NULL)$/i.test(s)) return "";
     const cityU = String(city || "").trim().toUpperCase();
     if (cityU) {
       const tail = " " + cityU;
@@ -289,6 +290,14 @@
     const needle = sanitize(opts.account || q);
     if (needle.length < 3) {
       return { ok: true, query: needle, features: [], note: "type more" };
+    }
+    if (!opts.account && !looksLikeAccount(needle) && !looksLikeAddress(needle)) {
+      return {
+        ok: true,
+        query: needle,
+        features: [],
+        note: "Assessor lookup needs a street address or account number.",
+      };
     }
     const params = new URLSearchParams({
       where: whereClause(needle, opts.account || null),

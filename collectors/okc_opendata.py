@@ -267,6 +267,13 @@ def lookup_land(q: str, limit: int = 8) -> dict:
     needle = sanitize(q)
     if len(needle) < 3:
         return {"ok": True, "query": needle, "features": [], "note": "type more"}
+    if not looks_like_address(needle):
+        return {
+            "ok": True,
+            "query": needle,
+            "features": [],
+            "note": "Land documents lookup needs a street address.",
+        }
     clauses = []
     for v in variants(needle) if looks_like_address(needle) else [needle]:
         like = v.replace("'", "")

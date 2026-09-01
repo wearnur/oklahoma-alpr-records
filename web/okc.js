@@ -14,6 +14,9 @@
   }
 
   async function lookupLand(q, limit) {
+    if (!/\d/.test(String(q || ""))) {
+      return { ok: true, query: q, features: [] };
+    }
     const variants = global.OKParcels && OKParcels.variants ? OKParcels.variants(q) : [String(q || "").toUpperCase()];
     const clauses = [];
     variants.forEach((v) => {

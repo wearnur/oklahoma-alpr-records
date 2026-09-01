@@ -95,43 +95,59 @@ function renderAmbient() {
   }, 280);
 }
 
+const CITY_ALIAS = { okc: "Oklahoma City" };
+
+function matchCity(needle, city) {
+  const n = needle.toLowerCase();
+  const name = (city || "").toLowerCase();
+  if (CITY_ALIAS[n] && name === CITY_ALIAS[n].toLowerCase()) return true;
+  if (n.length < 2) return false;
+  if (name === n || name.startsWith(n)) return true;
+  if (n.length >= 4 && name.includes(n)) return true;
+  return false;
+}
+
 function searchLocal(q) {
-  const needle = q.toLowerCase();
+  const needle = q.toLowerCase().trim();
   const hits = [];
+  if (!needle) return hits;
   cities.forEach((c) => {
-    if (c.city.toLowerCase().includes(needle)) hits.push({ kind: "city", city: c });
+    if (matchCity(needle, c.city)) hits.push({ kind: "city", city: c });
   });
   terms.forEach((t) => {
     const blob = `${t.city} ${t.contract_id || ""} ${t.file_number || ""}`.toLowerCase();
-    if (blob.includes(needle)) hits.push({ kind: "term", term: t });
+    if (needle.length >= 3 && blob.includes(needle)) hits.push({ kind: "term", term: t });
   });
   documents.forEach((d) => {
     const blob = `${d.name} ${d.city || ""} ${d.contract_id || ""}`.toLowerCase();
-    if (blob.includes(needle)) hits.push({ kind: "doc", doc: d });
+    if (needle.length >= 3 && blob.includes(needle)) hits.push({ kind: "doc", doc: d });
   });
   if (["missing", "hole", "holes", "absent"].includes(needle)) {
     cities.filter((c) => !c.has_contract_pdf).slice(0, 8).forEach((c) => hits.push({ kind: "city", city: c }));
   }
   catalog.forEach((row) => {
     const blob = `${row.id} ${row.class} ${(row.query || []).join(" ")} ${row.status}`.toLowerCase();
-    if (blob.includes(needle) || needle === "catalog" || needle === "what can i search") {
+    if (needle === "catalog" || needle === "what can i search" || (needle.length >= 3 && blob.includes(needle))) {
       hits.push({ kind: "catalog", row });
     }
   });
-  (okcCatalog.items || []).forEach((row) => {
-    const blob = `${row.title || ""} ${row.class || ""} ${row.status || ""}`.toLowerCase();
-    if (
-      needle === "catalog" ||
-      needle === "okc" ||
-      (needle.length >= 3 && blob.includes(needle))
-    ) {
-      hits.push({ kind: "okc-layer", row });
-    }
-  });
-  okcRows.forEach((row) => {
-    const blob = `${row.name || ""} ${row.address || ""} ${row.layer || ""} ${row.class || ""}`.toLowerCase();
-    if (needle.length >= 3 && blob.includes(needle)) hits.push({ kind: "okc-row", row });
-  });
+  const cityWide = needle === "okc" || needle === "oklahoma city";
+  if (cityWide) {
+    hits.push({ kind: "okc-overview", row: okcCatalog });
+    (okcCatalog.items || []).forEach((row) => {
+      if (row.status === "absent" || row.kind === "absent") hits.push({ kind: "okc-layer", row });
+    });
+  } else if (needle.length >= 3) {
+    (okcCatalog.items || []).forEach((row) => {
+      const title = (row.title || "").toLowerCase();
+      const klass = (row.class || "").replace(/^okc-/, "").toLowerCase();
+      if (title.includes(needle) || klass.includes(needle)) hits.push({ kind: "okc-layer", row });
+    });
+    okcRows.forEach((row) => {
+      const blob = `${row.name || ""} ${row.address || ""} ${row.layer || ""}`.toLowerCase();
+      if (blob.includes(needle)) hits.push({ kind: "okc-row", row });
+    });
+  }
   return hits.slice(0, 14);
 }
 
@@ -280,6 +296,17 @@ function paint(hits, parcels, chosen, land) {
           i++
         ));
       }
+      if (h.kind === "okc-overview") {
+        const r = h.row || {};
+        parts.push(rise(
+          `<article class="hit">
+            <p class="kicker">OKC open data</p>
+            <p>${r.layers || 0} layers labeled · ${Number(r.pulled_rows || 0).toLocaleString()} civic rows pulled</p>
+            <p class="muted">Huge GIS stays live-query. 311, building permits, and business licenses are absent on this portal.</p>
+          </article>`,
+          i++
+        ));
+      }
       if (h.kind === "okc-layer") {
         const r = h.row;
         const n = r.count != null ? r.count.toLocaleString() : "";
@@ -306,7 +333,7 @@ function paint(hits, parcels, chosen, land) {
       }
     });
   }
-  if (!chosen && parcels && parcels.features && parcels.features.length > 1) {
+  if (!chosen && addressQ && parcels && parcels.features && parcels.features.length > 1) {
     parts.push(rise(`<p class="kicker">Oklahoma County assessor · ${parcels.features.length} matches</p>`, i++));
     parcels.features.forEach((p) => {
       const sold = p.sale_price ? ` · last recorded sale ${money(p.sale_price)}` : "";
@@ -332,8 +359,11 @@ function paint(hits, parcels, chosen, land) {
 function qLooksLikeParcel(q) {
   const s = q.trim();
   if (s.length < 3) return false;
+  if (/^r?\d{6,}$/i.test(s.replace(/\s/g, ""))) return true;
+  if (!/\d/.test(s)) return false;
   if (/^(missing|holes?|absent|flock|alpr|catalog|what can i search)$/i.test(s)) return false;
   if (cities.some((c) => c.city.toLowerCase() === s.toLowerCase())) return false;
+  if (CITY_ALIAS[s.toLowerCase()]) return false;
   return true;
 }
 

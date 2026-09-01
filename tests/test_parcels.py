@@ -2,6 +2,7 @@ from collectors.parcels import (
     centroid,
     display_situs,
     haversine_m,
+    is_assessor_query,
     nearby_cameras,
     normalize_tokens,
     parse_sale_date,
@@ -67,4 +68,15 @@ def test_nearby_cameras_radius():
 def test_looks_like_address():
     assert looks_like_address("5309 N Dewey Ave")
     assert not looks_like_address("Tulsa")
+    assert not looks_like_address("OKC")
     assert not looks_like_address("R1234567")
+    assert is_assessor_query("5309 N Dewey Ave")
+    assert is_assessor_query("R049701050")
+    assert not is_assessor_query("OKC")
+    assert not is_assessor_query("Edmond")
+    assert not is_assessor_query("Oklahoma City")
+
+
+def test_display_situs_drops_unknown_placeholder():
+    assert display_situs("0 UNKNOWN", "EDMOND") == ""
+    assert display_situs("0 Unknown", None) == ""
